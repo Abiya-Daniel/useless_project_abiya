@@ -13,7 +13,7 @@ import ShadowShiftGame from './components/ShadowShiftGame';
 
 import { DEFAULT_STUDENTS } from './data/students';
 import { PERSONALITIES } from './data/personalities';
-import { RESPONSES_BY_TIER, PERSONALITY_OVERFLOW_QUOTES } from './data/responses';
+import { RESPONSES_BY_TIER, PERSONALITY_OVERFLOW_QUOTES, PERSONALITY_TIER_QUOTES } from './data/responses';
 import { 
   speakText, 
   stopSpeech, 
@@ -124,8 +124,14 @@ export default function App() {
       doorShouldOpen = true;
     }
 
-    const tierResponses = RESPONSES_BY_TIER[tierKey];
-    const chosenVerdict = tierResponses[Math.floor(Math.random() * tierResponses.length)];
+    let chosenVerdict;
+    const customTeacherQuote = PERSONALITY_TIER_QUOTES[activePersonality.id]?.[tierKey];
+    if (customTeacherQuote) {
+      chosenVerdict = customTeacherQuote;
+    } else {
+      const tierResponses = RESPONSES_BY_TIER[tierKey];
+      chosenVerdict = tierResponses[Math.floor(Math.random() * tierResponses.length)];
+    }
 
     setVerdict(chosenVerdict);
     setIsOpen(doorShouldOpen);
@@ -150,12 +156,7 @@ export default function App() {
       }
 
       // Voice announcement speech synthesis
-      let spokenMessage = chosenVerdict.announcement;
-      
-      const persQuote = PERSONALITY_OVERFLOW_QUOTES[activePersonality.id];
-      if (persQuote) {
-        spokenMessage = `${activePersonality.name} says: ${doorShouldOpen ? persQuote.LOW : persQuote.HIGH} ${chosenVerdict.primary}`;
-      }
+      const spokenMessage = chosenVerdict.announcement || chosenVerdict.primary;
 
       setIsSpeaking(true);
       speakText(spokenMessage, {

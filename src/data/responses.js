@@ -1,122 +1,146 @@
 export const RESPONSES_BY_TIER = {
   OVERLOAD_100: [
     {
-      primary: "100% attendance aanallo mone!",
-      secondary: "Nee ini classil vannittu entha cheyyana?",
-      action: "Ithrem padicha mathi. Veedil pokko. 😂",
-      announcement: "Attendance overload! One hundred percent attendance! Nee ini classil keranda, veetil pokko mone!",
-    },
-    {
-      primary: "🚨 ATTENDANCE OVERLOAD DETECTED!",
-      secondary: "College record break cheyyan aano udesham?",
-      action: "System crash aavum, ippol thanne sthalam vidu!",
-      announcement: "System alert! Attendance overload! Classil keraan paadilla. Veedil pokko!",
-    },
-    {
-      primary: "100% Attendance Monster!",
-      secondary: "Professor polish cheyyaan bench polum bakki illa.",
-      action: "Go home and take a break, bro!",
-      announcement: "Hundred percent monster! Veedil poyi rest edutho!",
+      primary: "100% attendance. Enthina ippozhum classil varunne?",
+      secondary: "Veettil poyi rest edukk.",
+      action: "Ithrem padicha mathi. Veettil poyi rest edutho! 😂",
+      announcement: "100% attendance. Enthina ippozhum classil varunne? Veettil poyi rest edukk.",
     }
   ],
   HIGH_85_99: [
     {
-      primary: "Nee classil keranda mone...",
-      secondary: "Ithrem padicha mathi.",
-      action: "Veedil poyi rest edutho.",
-      announcement: "Nee classil keranda mone. Ithrem padicha mathi. Veedil poyi rest edutho.",
-    },
-    {
-      primary: "Attendance okke adipoli aanu!",
-      secondary: "Classil vannal attendance koodilla mone.",
-      action: "Nee already quota complete cheythu.",
-      announcement: "Attendance okke adipoli aanu. Classil vannal attendance koodilla mone.",
-    },
-    {
-      primary: "Professor ninne kandittu happy aanu.",
-      secondary: "Ini classil irunnu bore adikkenda.",
-      action: "Canteenil poyi chayakkudikku!",
-      announcement: "Professor happy aanu. Canteenil poyi chayakkudikku mone!",
-    },
-    {
-      primary: "Nee padipist aavan nokkenda.",
-      secondary: "Kooduthal padichal thala vedanikkum.",
-      action: "Veedil pokko mone.",
-      announcement: "Nee classil keranda. Veedil pokko mone.",
-    },
-    {
-      primary: "Door Status: CLOSED for High Scorers!",
-      secondary: "Over-attendance leads to early retirement.",
-      action: "Exit classroom zone immediately.",
-      announcement: "Nee classil keranda mone. Quota complete aanu.",
+      primary: "Mone, ithrem nalla attendance okke undallo.",
+      secondary: "Innu classil keranda.",
+      action: "Veettil poyi relax cheytho.",
+      announcement: "Mone, ithrem nalla attendance okke undallo. Innu classil keranda. Veettil poyi relax cheytho.",
     }
   ],
   SAFE_75_84: [
     {
-      primary: "Attendance safe aanu.",
-      secondary: "Nee innu skip cheythalum scene illa.",
-      action: "Innathekk ithrem mathi. Relaxed aayikko.",
-      announcement: "Attendance safe aanu. Nee innu skip cheythalum scene illa.",
-    },
-    {
-      primary: "Classil kerunnath optional aanu.",
-      secondary: "75% kinju boundary safe aanu.",
-      action: "Door parayunnu: innu venda mone.",
-      announcement: "Classil kerunnath optional aanu. Innu venda mone.",
-    },
-    {
-      primary: "Safe zone spotted!",
-      secondary: "Innu btech life enjoy cheyyaam.",
-      action: "Grounded & relaxed mode activated.",
-      announcement: "Attendance safe aanu. Relaxed aayikko mone.",
+      primary: "Attendance safe aanu mone.",
+      secondary: "Innu leave eduthalum valiya scene onnum illa.",
+      action: "Relaxed aayikko mone.",
+      announcement: "Attendance safe aanu mone. Innu leave eduthalum valiya scene onnum illa.",
     }
   ],
   MID_50_74: [
     {
-      primary: "Situation kurachu serious aanu.",
-      secondary: "Classil kerikko mone...",
-      action: "Iniyum leave edukkan pattilla!",
-      announcement: "Situation kurachu serious aanu. Classil kerikko mone.",
-    },
-    {
-      primary: "Ninte attendance ninne nokki karayunnu.",
-      secondary: "Akathottu kerikko... vegam!",
-      action: "Ini attendance save cheyyanam.",
-      announcement: "Akathottu kerikko vegam. Attendance save cheyyanam.",
-    },
-    {
-      primary: "75% missing Warning!",
-      secondary: "Benches are waiting for you.",
-      action: "Door status: OPEN for saving your semester!",
-      announcement: "Warning! Classil kerikko mone, attendance kuravaanu.",
+      primary: "Mone, attendance kurachu weak aanu.",
+      secondary: "Classil keri irikku.",
+      action: "Ippo athaanu best mone.",
+      announcement: "Mone, attendance kurachu weak aanu. Classil keri irikku. Ippo athaanu best.",
     }
   ],
   LOW_BELOW_50: [
     {
-      primary: "🚨 NEE AKATHOTTU KERIKKO MONE!",
-      secondary: "Ninte attendance kandittu pediyavunnu.",
-      action: "Ini leave eduthal theernnu!",
-      announcement: "🚨 NEE AKATHOTTU KERIKKO MONE! Ninte attendance kandittu pediyavunnu!",
-    },
-    {
-      primary: "Attendance emergency aanu!",
-      secondary: "Professorine kandittu sorry parayikko.",
-      action: "Door thanne parayunnu — AKATHU KERU!",
-      announcement: "Attendance emergency aanu. Classil kayari irikku vegam!",
-    },
-    {
-      primary: "Single Digit Danger Level!",
-      secondary: "HOD office vilikku munpu classil keru.",
-      action: "Emergency Entry Approved!",
-      announcement: "Nee akathottu kerikko mone! Emergency aanu!",
-    },
-    {
-      primary: "Canteenil irunnath mathi!",
-      secondary: "Bench blank aayi kidakkunnu.",
-      action: "First row seats reserved for low attendance legends!",
-      announcement: "Akathottu keru. Canteenil irunnath mathi!",
+      primary: "Ayyo mone! Ee attendance kandittu pedi aakunnu!",
+      secondary: "Ninte attendance kandittu enikku thanne pedi aakunnu.",
+      action: "Vegam classil kerikko! 🚨",
+      announcement: "Ayyo mone! Ee attendance kandittu enikku thanne pedi aakunnu. Vegam classil kerikko!",
     }
   ]
+};
+
+// Exact Teacher Personality Quotes for each Attendance Tier
+export const PERSONALITY_TIER_QUOTES = {
+  friendly_teacher: {
+    OVERLOAD_100: {
+      primary: "Ayyo mone, 100% attendance aano?",
+      secondary: "Nee classil vannu entha cheyyana?",
+      action: "Veettil poyi oru rest edutho. 😊",
+      announcement: "Ayyo mone, 100% attendance aano? Nee classil vannu entha cheyyana? Veettil poyi oru rest edutho."
+    },
+    HIGH_85_99: {
+      primary: "Mone, ithrem nalla attendance okke undallo.",
+      secondary: "Innu classil keranda.",
+      action: "Veettil poyi relax cheytho. ☕",
+      announcement: "Mone, ithrem nalla attendance okke undallo. Innu classil keranda. Veettil poyi relax cheytho."
+    },
+    SAFE_75_84: {
+      primary: "Attendance safe aanu mone.",
+      secondary: "Innu leave eduthalum valiya scene onnum illa.",
+      action: "Relaxed aayikko mone. 😌",
+      announcement: "Attendance safe aanu mone. Innu leave eduthalum valiya scene onnum illa."
+    },
+    MID_50_74: {
+      primary: "Mone, attendance kurachu weak aanu.",
+      secondary: "Classil keri irikku.",
+      action: "Ippo athaanu best mone. 📚",
+      announcement: "Mone, attendance kurachu weak aanu. Classil keri irikku. Ippo athaanu best."
+    },
+    LOW_BELOW_50: {
+      primary: "Ayyo mone! Ee attendance kandittu pedi aakunnu!",
+      secondary: "Ninte attendance kandittu enikku thanne pedi aakunnu.",
+      action: "Vegam classil kerikko! 🚨",
+      announcement: "Ayyo mone! Ee attendance kandittu enikku thanne pedi aakunnu. Vegam classil kerikko!"
+    }
+  },
+
+  strict_teacher: {
+    OVERLOAD_100: {
+      primary: "100% attendance. Enthina ippozhum classil varunne?",
+      secondary: "Veettil poyi rest edukk.",
+      action: "Classil keranda. Pokko! 🛑",
+      announcement: "100% attendance. Enthina ippozhum classil varunne? Veettil poyi rest edukk."
+    },
+    HIGH_85_99: {
+      primary: "Attendance already excellent aanu.",
+      secondary: "Innu class miss cheythalum kuzhappam illa.",
+      action: "Pokko! 🚪",
+      announcement: "Attendance already excellent aanu. Innu class miss cheythalum kuzhappam illa. Pokko."
+    },
+    SAFE_75_84: {
+      primary: "Attendance acceptable aanu.",
+      secondary: "Pakshe overconfidence venda.",
+      action: "Maintain your discipline! ⚠️",
+      announcement: "Attendance acceptable aanu. Pakshe overconfidence venda."
+    },
+    MID_50_74: {
+      primary: "Attendance kuravaanu.",
+      secondary: "Classil keri irikku.",
+      action: "Excuse onnum venda! 📝",
+      announcement: "Attendance kuravaanu. Classil keri irikku. Excuse onnum venda."
+    },
+    LOW_BELOW_50: {
+      primary: "Ithaano ninte attendance?!",
+      secondary: "Vegam akathottu kerikko.",
+      action: "Ini oru class polum miss cheyyaruthu! 🚨",
+      announcement: "Ithaano ninte attendance? Vegam akathottu kerikko. Ini oru class polum miss cheyyaruthu."
+    }
+  },
+
+  angry_professor: {
+    OVERLOAD_100: {
+      primary: "100% attendance! Nee enthina ivide vannath?!",
+      secondary: "Veettil poyi irikku!",
+      action: "PO VEETIL! 🤬",
+      announcement: "100% attendance! Nee enthina ivide vannath? Veettil poyi irikku!"
+    },
+    HIGH_85_99: {
+      primary: "Ithrem attendance undayittum classil varanaam enno?!",
+      secondary: "Classil varanam ennoru nirbandham undo?",
+      action: "PO! 🚪💥",
+      announcement: "Ithrem attendance undayittum classil varanam ennoru nirbandham undo? PO!"
+    },
+    SAFE_75_84: {
+      primary: "Attendance okay aanu.",
+      secondary: "Innu skip cheythal enikku oru problem illa.",
+      action: "Next! ⏩",
+      announcement: "Attendance okay aanu. Innu skip cheythal enikku oru problem illa. Next!"
+    },
+    MID_50_74: {
+      primary: "Ithu attendance aano?!",
+      secondary: "Akathottu kereda!",
+      action: "Enthina purathu nilkkunne?! 😠",
+      announcement: "Ithu attendance aano? Akathottu kereda! Enthina purathu nilkkunne?"
+    },
+    LOW_BELOW_50: {
+      primary: "DA! NINTE ATTENDANCE ETHRA AANENNU ARIYO?!",
+      secondary: "AKATHOTTU KERI IRIKKU!",
+      action: "ENTRY FORCED IMMEDIATELY! 🚨",
+      announcement: "DA! NINTE ATTENDANCE ETHRA AANENNU ARIYO? AKATHOTTU KERI IRIKKU!"
+    }
+  }
 };
 
 export const PERSONALITY_OVERFLOW_QUOTES = {
@@ -131,25 +155,5 @@ export const PERSONALITY_OVERFLOW_QUOTES = {
   angry_professor: {
     HIGH: "Nee ippo classil keriyillel pinne attendance chodikkanda! VEETIL PO DA!",
     LOW: "DAAA! AKATHOTTU KERIDA! Ninte attendance sheet kanditt enikku bhranthu pidikkunnu!",
-  },
-  malayali_uncle: {
-    HIGH: "Mone... adutha veettile Sureshinte mon polum ithrem padikoolla. Ini veettil pokko, naattukaar kandaal enthu karudhum?",
-    LOW: "Mone attendance okke nokkande? Naattil charcha aavum. Akathottu po vegam!",
-  },
-  hostel_warden: {
-    HIGH: "Evide pokunnu? Hostelil poyi room pootti irikku! Classil spot illa!",
-    LOW: "Night roll callil ninne kandilla! Ippo classil keriyillel gate poottum!",
-  },
-  pta_president: {
-    HIGH: "PTA meetingil njan ninte achane abhinandikkam. Innu classil keranda, rest edutho!",
-    LOW: "Njan ninte veettil vilikkaan povukayaanu! Vegam akathottu keru!",
-  },
-  motivational_sir: {
-    HIGH: "Breakthrough comes from REST, not from classroom! Go home and build a startup!",
-    LOW: "Wake up champion! This bench is your launchpad! STEP INSIDE RIGHT NOW!",
-  },
-  kili_poya_ai: {
-    HIGH: "Attendance = 94% 😎 | Brain processing = 2% | Decision = VEETIL POKKO MONE 💥",
-    LOW: "ATTENDANCE CRITICAL ERROR 404! 🤖 Bypassing door security... GET INSIDE HUMAN!",
   }
 };
