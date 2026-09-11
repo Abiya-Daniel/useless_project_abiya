@@ -127,17 +127,6 @@ export default function Header({
             <span>🚪 Smart Door Simulator</span>
           </button>
 
-          <button
-            onClick={() => setActiveTab('arcade')}
-            className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all flex items-center gap-2 whitespace-nowrap ${
-              activeTab === 'arcade'
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm'
-                : 'text-slate-400 text-theme-muted hover:text-slate-200 hover:bg-slate-800/50'
-            }`}
-          >
-            <Gamepad2 className="w-4 h-4" />
-            <span>🎮 Arcade Hub (8 Games)</span>
-          </button>
 
           <button
             onClick={() => setActiveTab('personality')}
