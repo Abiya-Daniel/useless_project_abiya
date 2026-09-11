@@ -9,6 +9,7 @@ import HardwareLog from './components/HardwareLog';
 import CameraQRScanner from './components/CameraQRScanner';
 import LudoGame from './components/LudoGame';
 import ChessGame from './components/ChessGame';
+import ShadowShiftGame from './components/ShadowShiftGame';
 
 import { DEFAULT_STUDENTS } from './data/students';
 import { PERSONALITIES } from './data/personalities';
@@ -53,13 +54,15 @@ export default function App() {
     }
   ]);
 
-  // Hash listener for mobile QR code launcher (#ludo or #chess)
+  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift)
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#ludo') {
         setActiveTab('ludo');
       } else if (window.location.hash === '#chess') {
         setActiveTab('chess');
+      } else if (window.location.hash === '#shadowshift') {
+        setActiveTab('shadowshift');
       }
     };
     handleHashChange();
@@ -220,8 +223,8 @@ export default function App() {
                   <h4 className="text-xs font-bold text-amber-300 uppercase font-mono">
                     INVERSE ATTENDANCE RULE + GAME REWARDS:
                   </h4>
-                  <p className="text-xs text-slate-300 font-malayalam mt-0.5">
-                    <strong>Good Student (&ge;85%)</strong> &rarr; 🔒 STAY HOME & PLAY CHESS/LUDO | <strong>Bad Student (&lt;75%)</strong> &rarr; 🟢 ENTER CLASS
+                  <p className="text-xs text-slate-300 text-theme-muted font-malayalam mt-0.5">
+                    <strong>Good Student (&ge;85%)</strong> &rarr; 🔒 STAY HOME & PLAY CHESS/LUDO/SHADOW SHIFT | <strong>Bad Student (&lt;75%)</strong> &rarr; 🟢 ENTER CLASS
                   </p>
                 </div>
               </div>
@@ -304,6 +307,7 @@ export default function App() {
                     onRescan={() => setSelectedStudent(null)}
                     onOpenLudo={() => setActiveTab('ludo')}
                     onOpenChess={() => setActiveTab('chess')}
+                    onOpenShadowShift={() => setActiveTab('shadowshift')}
                   />
                 )}
               </div>
@@ -325,6 +329,13 @@ export default function App() {
           <ChessGame
             onBackToDoor={() => setActiveTab('door')}
             onSwitchToLudo={() => setActiveTab('ludo')}
+          />
+        )}
+
+        {/* Tab 4: Shadow Shift Dual Runner Game */}
+        {activeTab === 'shadowshift' && (
+          <ShadowShiftGame
+            onBackToDoor={() => setActiveTab('door')}
           />
         )}
 
