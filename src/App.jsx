@@ -10,6 +10,7 @@ import CameraQRScanner from './components/CameraQRScanner';
 import LudoGame from './components/LudoGame';
 import ChessGame from './components/ChessGame';
 import ShadowShiftGame from './components/ShadowShiftGame';
+import CarRacingGame from './components/CarRacingGame';
 
 import { DEFAULT_STUDENTS } from './data/students';
 import { PERSONALITIES } from './data/personalities';
@@ -54,7 +55,7 @@ export default function App() {
     }
   ]);
 
-  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift)
+  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift, #racing)
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#ludo') {
@@ -63,6 +64,8 @@ export default function App() {
         setActiveTab('chess');
       } else if (window.location.hash === '#shadowshift') {
         setActiveTab('shadowshift');
+      } else if (window.location.hash === '#racing') {
+        setActiveTab('racing');
       }
     };
     handleHashChange();
@@ -309,6 +312,7 @@ export default function App() {
                     onOpenLudo={() => setActiveTab('ludo')}
                     onOpenChess={() => setActiveTab('chess')}
                     onOpenShadowShift={() => setActiveTab('shadowshift')}
+                    onOpenRacing={() => setActiveTab('racing')}
                   />
                 )}
               </div>
@@ -336,6 +340,13 @@ export default function App() {
         {/* Tab 4: Shadow Shift Dual Runner Game */}
         {activeTab === 'shadowshift' && (
           <ShadowShiftGame
+            onBackToDoor={() => setActiveTab('door')}
+          />
+        )}
+
+        {/* Tab 5: Kerala Highway Rider Car Racing Game */}
+        {activeTab === 'racing' && (
+          <CarRacingGame
             onBackToDoor={() => setActiveTab('door')}
           />
         )}

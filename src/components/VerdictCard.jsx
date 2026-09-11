@@ -3,7 +3,7 @@ import { Volume2, Download, Share2, AlertTriangle, CheckCircle, XCircle, Sparkle
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 
-export default function VerdictCard({ student, verdict, isOpen, activePersonality, onReplayAudio, onRescan, onOpenLudo, onOpenChess, onOpenShadowShift }) {
+export default function VerdictCard({ student, verdict, isOpen, activePersonality, onReplayAudio, onRescan, onOpenLudo, onOpenChess, onOpenShadowShift, onOpenRacing }) {
   const cardRef = useRef(null);
 
   if (!student || !verdict) return null;
@@ -27,9 +27,6 @@ export default function VerdictCard({ student, verdict, isOpen, activePersonalit
       console.error('Download pass error', e);
     }
   };
-
-  const ludoGameUrl = window.location.origin + window.location.pathname + '#ludo';
-  const chessGameUrl = window.location.origin + window.location.pathname + '#chess';
 
   return (
     <div className="space-y-4 animate-fade-in font-sans">
@@ -112,7 +109,7 @@ export default function VerdictCard({ student, verdict, isOpen, activePersonalit
           </div>
         </div>
 
-        {/* High Attendance Home Reward Game Hub (LUDO vs CHESS vs SHADOW SHIFT Picker) */}
+        {/* High Attendance Home Reward Game Hub (LUDO, CHESS, SHADOW SHIFT, CAR RACING Picker) */}
         {isHighAttendance && (
           <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-2 border-amber-400/50 rounded-2xl p-5 mb-6 text-center space-y-4 shadow-xl">
             <div className="flex items-center justify-center gap-2 text-amber-300 font-extrabold font-mono text-sm uppercase">
@@ -121,21 +118,21 @@ export default function VerdictCard({ student, verdict, isOpen, activePersonalit
             </div>
 
             <p className="text-xs text-slate-200 font-malayalam">
-              Attendance safe aanu! Choose <strong>LUDO</strong>, <strong>CHESS</strong>, or <strong>SHADOW SHIFT</strong> to play at home!
+              Attendance safe aanu! Choose <strong>LUDO</strong>, <strong>CHESS</strong>, <strong>SHADOW SHIFT</strong>, or <strong>CAR RACING</strong>!
             </p>
 
             {/* Game Options Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
               <button
                 onClick={onOpenLudo}
                 className="p-3 rounded-2xl bg-[#161B22] border-2 border-emerald-500/50 hover:border-emerald-400 text-left transition-all group"
               >
                 <div className="flex items-center gap-2 font-mono font-bold text-emerald-300 text-sm">
                   <span className="text-xl">🎲</span>
-                  <span>LUDO GAME</span>
+                  <span>LUDO</span>
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1 font-mono">
-                  Green User 🟢 vs 3 AI Bots
+                  1 User vs 3 Bots
                 </p>
               </button>
 
@@ -145,10 +142,10 @@ export default function VerdictCard({ student, verdict, isOpen, activePersonalit
               >
                 <div className="flex items-center gap-2 font-mono font-bold text-amber-300 text-sm">
                   <span className="text-xl">♟️</span>
-                  <span>CHESS GAME</span>
+                  <span>CHESS</span>
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1 font-mono">
-                  White ♔ vs AI Professor
+                  White ♔ vs AI
                 </p>
               </button>
 
@@ -161,7 +158,20 @@ export default function VerdictCard({ student, verdict, isOpen, activePersonalit
                   <span>SHADOW SHIFT</span>
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1 font-mono">
-                  Dual character runner!
+                  Dual runner!
+                </p>
+              </button>
+
+              <button
+                onClick={onOpenRacing}
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-rose-500/50 hover:border-rose-400 text-left transition-all group"
+              >
+                <div className="flex items-center gap-2 font-mono font-bold text-rose-300 text-sm">
+                  <span className="text-xl">🏎️</span>
+                  <span>HIGHWAY RIDER</span>
+                </div>
+                <p className="text-[10px] text-slate-400 mt-1 font-mono">
+                  Car Racing!
                 </p>
               </button>
             </div>
