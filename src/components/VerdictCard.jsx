@@ -10,14 +10,7 @@ export default function VerdictCard({
   activePersonality, 
   onReplayAudio, 
   onRescan, 
-  onOpenLudo, 
-  onOpenChess, 
-  onOpenShadowShift, 
-  onOpenRacing,
-  onOpenSnake,
-  onOpenFlappy,
-  onOpenTicTacToe,
-  onOpenMemoryMatch
+  onOpenLudo
 }) {
   const cardRef = useRef(null);
 
@@ -124,97 +117,30 @@ export default function VerdictCard({
           </div>
         </div>
 
-        {/* High Attendance Home Reward Game Hub (8 GAMES ARCADE) */}
+        {/* High Attendance Home Reward Banner */}
         {isHighAttendance && (
-          <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-2 border-amber-400/50 rounded-2xl p-5 mb-6 shadow-xl flex flex-col items-center text-center space-y-4">
-            
-            {/* Centered Heading */}
-            <div className="flex flex-col items-center justify-center gap-1">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold font-mono text-xs sm:text-sm uppercase tracking-wider shadow-md">
-                <Gamepad2 className="w-4 h-4 text-amber-400 animate-bounce" />
-                <span>🎮 VEETTIL POYI GAME KALIKKU MONE! (8 ARCADE GAMES)</span>
+          <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-2 border-amber-400/50 rounded-2xl p-4 mb-6 shadow-xl flex items-center justify-between gap-4 font-mono">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-xl shrink-0">
+                🎮
               </div>
-              <p className="text-xs sm:text-sm font-semibold font-malayalam text-slate-200 mt-1 max-w-xl leading-relaxed">
-                Attendance safe aanu! Pick your favorite game to play at home!
-              </p>
+              <div>
+                <h4 className="text-xs font-extrabold text-amber-300 uppercase tracking-wider">
+                  VEETTIL POYI GAME KALIKKU MONE!
+                </h4>
+                <p className="text-[11px] text-slate-300 font-malayalam mt-0.5">
+                  Attendance safe aanu! Play any of the 8 arcade games in the left panel!
+                </p>
+              </div>
             </div>
 
-            {/* 8 Game Options Buttons Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full pt-1">
-              
-              <button
-                onClick={onOpenLudo}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-emerald-500/50 hover:border-emerald-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">🎲</span>
-                <span className="font-mono font-extrabold text-emerald-300 text-xs tracking-wider">LUDO</span>
-                <span className="text-[9px] text-slate-400 font-mono">1 vs 3 Bots</span>
-              </button>
-
-              <button
-                onClick={onOpenChess}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-amber-500/50 hover:border-amber-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">♟️</span>
-                <span className="font-mono font-extrabold text-amber-300 text-xs tracking-wider">CHESS</span>
-                <span className="text-[9px] text-slate-400 font-mono">White vs AI</span>
-              </button>
-
-              <button
-                onClick={onOpenShadowShift}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-purple-500/50 hover:border-purple-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">🌑</span>
-                <span className="font-mono font-extrabold text-purple-300 text-xs tracking-wider">SHADOW SHIFT</span>
-                <span className="text-[9px] text-slate-400 font-mono">Dual Runner</span>
-              </button>
-
-              <button
-                onClick={onOpenRacing}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-rose-500/50 hover:border-rose-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">🏎️</span>
-                <span className="font-mono font-extrabold text-rose-300 text-xs tracking-wider">HIGHWAY RIDER</span>
-                <span className="text-[9px] text-slate-400 font-mono">Car Racing</span>
-              </button>
-
-              <button
-                onClick={onOpenSnake}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-teal-500/50 hover:border-teal-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">🐍</span>
-                <span className="font-mono font-extrabold text-teal-300 text-xs tracking-wider">SNAKE</span>
-                <span className="text-[9px] text-slate-400 font-mono">Canteen Snake</span>
-              </button>
-
-              <button
-                onClick={onOpenFlappy}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-yellow-500/50 hover:border-yellow-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">🐥</span>
-                <span className="font-mono font-extrabold text-yellow-300 text-xs tracking-wider">FLAPPY BTECH</span>
-                <span className="text-[9px] text-slate-400 font-mono">Tap Flap</span>
-              </button>
-
-              <button
-                onClick={onOpenTicTacToe}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-orange-500/50 hover:border-orange-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">❌⭕</span>
-                <span className="font-mono font-extrabold text-orange-300 text-xs tracking-wider">TIC-TAC-TOE</span>
-                <span className="text-[9px] text-slate-400 font-mono">X vs O</span>
-              </button>
-
-              <button
-                onClick={onOpenMemoryMatch}
-                className="p-3 rounded-2xl bg-[#161B22] border-2 border-indigo-500/50 hover:border-indigo-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
-              >
-                <span className="text-2xl group-hover:scale-110 transition-transform">🎴</span>
-                <span className="font-mono font-extrabold text-indigo-300 text-xs tracking-wider">MEMORY MATCH</span>
-                <span className="text-[9px] text-slate-400 font-mono">Flip Cards</span>
-              </button>
-
-            </div>
+            <button
+              onClick={onOpenLudo}
+              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shrink-0 shadow-md hover:brightness-110"
+            >
+              <Gamepad2 className="w-4 h-4" />
+              <span>PLAY GAME</span>
+            </button>
           </div>
         )}
 

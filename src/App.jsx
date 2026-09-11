@@ -375,13 +375,6 @@ export default function App() {
                     onReplayAudio={handleReplayAudio}
                     onRescan={() => setSelectedStudent(null)}
                     onOpenLudo={() => setActiveTab('ludo')}
-                    onOpenChess={() => setActiveTab('chess')}
-                    onOpenShadowShift={() => setActiveTab('shadowshift')}
-                    onOpenRacing={() => setActiveTab('racing')}
-                    onOpenSnake={() => setActiveTab('snake')}
-                    onOpenFlappy={() => setActiveTab('flappy')}
-                    onOpenTicTacToe={() => setActiveTab('tictactoe')}
-                    onOpenMemoryMatch={() => setActiveTab('memory')}
                   />
                 )}
               </div>
