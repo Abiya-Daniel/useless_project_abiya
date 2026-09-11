@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, Shield, Zap, Sparkles, Pause, ArrowLeft, Gamepad2, Trophy, Award } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, Shield, Zap, Sparkles, Pause, ArrowLeft, Gamepad2, Trophy, Award, Flame, CheckCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 // Simple Web Audio API sound synthesizer
@@ -77,6 +77,8 @@ const audio = new SoundEngine();
 export default function ShadowShiftGame({ onBackToDoor }) {
   const canvasRef = useRef(null);
   const [gameState, setGameState] = useState('MENU'); // 'MENU', 'PLAYING', 'PAUSED', 'GAMEOVER'
+  const [difficulty, setDifficulty] = useState('MEDIUM'); // 'EASY', 'MEDIUM', 'HARD', 'EXPERT'
+  
   const [score, setScore] = useState(0);
   const [distance, setDistance] = useState(0);
   const [combo, setCombo] = useState(1);
@@ -100,7 +102,9 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     comboMultiplier: 1,
     energyLevel: 100,
     shieldActive: false,
+    shieldsLeft: 0,
     slowTimeActive: false,
+    scoreMultiplier: 1,
     
     // Tracks configuration
     topTrackY: 160,
@@ -141,7 +145,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     // Random Event Engine
     currentEvent: null, // 'BLACKOUT', 'MIRROR', 'GIANT', 'SHADOW_RAIN'
     eventTimer: 0,
-    nextEventIn: 25, // seconds until next random event
+    nextEventIn: 25,
 
     // Controls
     keys: {},
@@ -187,7 +191,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [gameState]);
+  }, [gameState, difficulty]);
 
   const triggerJump = () => {
     const eng = engine.current;
@@ -212,7 +216,6 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     const p = eng.player;
     const s = eng.shadow;
 
-    // Both jump together
     if (!p.isJumping) {
       p.vy = -12;
       p.isJumping = true;
@@ -231,7 +234,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
     if (!p.isSliding) {
       p.isSliding = true;
-      p.slideTimer = 22; // frames
+      p.slideTimer = 22;
       audio.slide();
     }
     if (!s.isSliding) {
@@ -242,17 +245,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
   const triggerShift = () => {
     const eng = engine.current;
-    if (eng.energyLevel < 12) return; // Costs energy
+    if (eng.energyLevel < 10) return;
 
-    eng.energyLevel = Math.max(0, eng.energyLevel - 12);
+    eng.energyLevel = Math.max(0, eng.energyLevel - 10);
     setEnergy(Math.round(eng.energyLevel));
     audio.shift();
 
-    // Swap tracks for Player and Shadow!
     eng.player.onTopTrack = !eng.player.onTopTrack;
     eng.shadow.onTopTrack = !eng.shadow.onTopTrack;
 
-    // Burst particle effect
     for (let i = 0; i < 16; i++) {
       eng.particles.push({
         x: eng.player.x,
@@ -268,12 +269,38 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
   const startGame = () => {
     const eng = engine.current;
-    eng.speed = 6;
+    
+    // Configure settings based on chosen difficulty
+    let startSpeed = 6;
+    let scoreMult = 1;
+    let initialShields = 0;
+
+    if (difficulty === 'EASY') {
+      startSpeed = 4.5;
+      scoreMult = 0.8;
+      initialShields = 3;
+    } else if (difficulty === 'MEDIUM') {
+      startSpeed = 6.0;
+      scoreMult = 1.0;
+      initialShields = 1;
+    } else if (difficulty === 'HARD') {
+      startSpeed = 8.5;
+      scoreMult = 1.5;
+      initialShields = 0;
+    } else if (difficulty === 'EXPERT') {
+      startSpeed = 11.0;
+      scoreMult = 2.5;
+      initialShields = 0;
+    }
+
+    eng.speed = startSpeed;
+    eng.scoreMultiplier = scoreMult;
+    eng.shieldsLeft = initialShields;
+    eng.shieldActive = initialShields > 0;
     eng.distanceMeter = 0;
     eng.coinsCollected = 0;
     eng.comboMultiplier = 1;
     eng.energyLevel = 100;
-    eng.shieldActive = false;
     eng.slowTimeActive = false;
     eng.obstacles = [];
     eng.particles = [];
@@ -365,17 +392,21 @@ export default function ShadowShiftGame({ onBackToDoor }) {
       const eng = engine.current;
       const dt = 1 / 60;
 
-      // Update distance & speed
+      // Update distance & live score
       eng.distanceMeter += eng.speed * 0.1;
       const curDist = Math.floor(eng.distanceMeter);
+      const calculatedScore = Math.floor((curDist * eng.comboMultiplier + eng.coinsCollected * 50) * eng.scoreMultiplier);
+      
       setDistance(curDist);
-      setScore(Math.floor(curDist * eng.comboMultiplier + eng.coinsCollected * 50));
+      setScore(calculatedScore);
 
-      // Gradual acceleration
-      eng.speed = 6 + Math.min(10, curDist / 400);
+      // Gradual acceleration based on difficulty
+      const accelRate = difficulty === 'EXPERT' ? 300 : difficulty === 'HARD' ? 350 : 450;
+      eng.speed = (difficulty === 'EASY' ? 4.5 : difficulty === 'HARD' ? 8.5 : difficulty === 'EXPERT' ? 11.0 : 6.0) + Math.min(8, curDist / accelRate);
 
       // Energy auto-refill
-      eng.energyLevel = Math.min(100, eng.energyLevel + 0.05);
+      const refillSpeed = difficulty === 'EASY' ? 0.08 : 0.05;
+      eng.energyLevel = Math.min(100, eng.energyLevel + refillSpeed);
       setEnergy(Math.round(eng.energyLevel));
 
       // Random Event Engine Logic (Every 25 seconds)
@@ -384,7 +415,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         const events = ['BLACKOUT', 'MIRROR', 'GIANT', 'SHADOW_RAIN'];
         const chosen = events[Math.floor(Math.random() * events.length)];
         eng.currentEvent = chosen;
-        eng.eventTimer = 10; // Lasts 10s
+        eng.eventTimer = 10;
         eng.nextEventIn = 25;
         setActiveEvent(chosen);
       }
@@ -398,9 +429,10 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         }
       }
 
-      // Spawn obstacles periodically
+      // Spawn obstacles periodically based on difficulty
       obstacleTimer++;
-      const spawnInterval = Math.max(35, 90 - Math.floor(eng.speed * 3.5));
+      const baseInterval = difficulty === 'EXPERT' ? 35 : difficulty === 'HARD' ? 45 : difficulty === 'EASY' ? 75 : 60;
+      const spawnInterval = Math.max(25, baseInterval - Math.floor(eng.speed * 2));
       if (obstacleTimer > spawnInterval) {
         spawnObstacle();
         obstacleTimer = 0;
@@ -410,18 +442,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
       [eng.player, eng.shadow].forEach((char) => {
         const groundY = char.onTopTrack ? eng.topTrackY : eng.bottomTrackY;
 
-        // Apply gravity
         char.vy += 0.6;
         char.y += char.vy;
 
-        // Ground collision
         if (char.y >= groundY) {
           char.y = groundY;
           char.vy = 0;
           char.isJumping = false;
         }
 
-        // Slide timer
         if (char.isSliding) {
           char.slideTimer--;
           if (char.slideTimer <= 0) {
@@ -436,20 +465,20 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         const moveSpeed = eng.slowTimeActive ? eng.speed * 0.5 : eng.speed;
         obs.x -= moveSpeed;
 
-        // Check collision with Player or Shadow depending on which is on this track
         const targetChar = eng.player.onTopTrack === obs.onTopTrack ? eng.player : eng.shadow;
         const charY = targetChar.y - (targetChar.isSliding ? 18 : targetChar.height);
         const charHeight = targetChar.isSliding ? 18 : targetChar.height;
 
         const obsY = obs.onTopTrack ? eng.topTrackY - obs.height : eng.bottomTrackY - obs.height;
 
-        // AABB Collision check
         const overlapX = targetChar.x < obs.x + obs.width && targetChar.x + targetChar.width > obs.x;
         const overlapY = charY < obsY + obs.height && charY + charHeight > obsY;
 
         if (overlapX && overlapY) {
-          if (eng.shieldActive) {
-            eng.shieldActive = false;
+          if (eng.shieldsLeft > 0 || eng.shieldActive) {
+            if (eng.shieldsLeft > 0) eng.shieldsLeft--;
+            if (eng.shieldsLeft <= 0) eng.shieldActive = false;
+            
             eng.obstacles.splice(i, 1);
             audio.hit();
             continue;
@@ -458,15 +487,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
           // GAMEOVER
           audio.hit();
           setGameState('GAMEOVER');
-          if (curDist > highScore) {
-            setHighScore(curDist);
-            localStorage.setItem('shadow_shift_high_score', curDist.toString());
+          if (calculatedScore > highScore) {
+            setHighScore(calculatedScore);
+            localStorage.setItem('shadow_shift_high_score', calculatedScore.toString());
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
           }
           return;
         }
 
-        // Close call detection (Passed close without hitting)
+        // Close call detection
         if (!obs.passed && obs.x + obs.width < targetChar.x) {
           obs.passed = true;
           const distToObs = Math.abs(charY - obsY);
@@ -479,7 +508,6 @@ export default function ShadowShiftGame({ onBackToDoor }) {
           }
         }
 
-        // Remove off-screen obstacles
         if (obs.x < -100) {
           eng.obstacles.splice(i, 1);
         }
@@ -509,6 +537,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
             setCoins(eng.coinsCollected);
             audio.coin();
           } else if (p.type === 'SHIELD') {
+            eng.shieldsLeft += 1;
             eng.shieldActive = true;
             audio.coin();
           }
@@ -521,52 +550,42 @@ export default function ShadowShiftGame({ onBackToDoor }) {
       // --- CANVAS DRAWING ---
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Environment Color Theme based on distance
       let bgColor = '#0A1128';
       let trackColor = '#1e293b';
-      let accentGlow = '#38bdf8';
 
       if (curDist > 6000) {
         bgColor = '#030712';
-        accentGlow = '#f43f5e';
       } else if (curDist > 3000) {
         bgColor = '#2B0918';
-        accentGlow = '#fb923c';
       } else if (curDist > 1000) {
         bgColor = '#1A0B2E';
-        accentGlow = '#c084fc';
       }
 
-      // Background Fill
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Tracks Line Drawing
       ctx.strokeStyle = trackColor;
       ctx.lineWidth = 3;
 
-      // Top Ground
       ctx.beginPath();
       ctx.moveTo(0, eng.topTrackY);
       ctx.lineTo(canvas.width, eng.topTrackY);
       ctx.stroke();
 
-      // Bottom Ground
       ctx.beginPath();
       ctx.moveTo(0, eng.bottomTrackY);
       ctx.lineTo(canvas.width, eng.bottomTrackY);
       ctx.stroke();
 
-      // Divider Dotted Line between tracks
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
       ctx.setLineDash([8, 8]);
       ctx.beginPath();
       ctx.moveTo(0, (eng.topTrackY + eng.bottomTrackY) / 2);
       ctx.lineTo(canvas.width, (eng.topTrackY + eng.bottomTrackY) / 2);
       ctx.stroke();
-      ctx.setLineDash([]); // Reset line dash
+      ctx.setLineDash([]);
 
-      // --- DRAW OBSTACLES ---
+      // Draw obstacles
       eng.obstacles.forEach((obs) => {
         const obsY = obs.onTopTrack ? eng.topTrackY : eng.bottomTrackY;
 
@@ -591,7 +610,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         }
       });
 
-      // --- DRAW POWERUPS ---
+      // Draw powerups
       eng.powerups.forEach((p) => {
         const pY = p.onTopTrack ? eng.topTrackY - 20 : eng.bottomTrackY - 20;
 
@@ -607,7 +626,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         ctx.fill();
       });
 
-      // --- DRAW PLAYER CHARACTER ---
+      // Draw player character
       const p = eng.player;
       const pY = p.y - (p.isSliding ? 18 : p.height);
       const pHeight = p.isSliding ? 18 : p.height;
@@ -619,12 +638,11 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
       ctx.fillRect(p.x, pY, p.width, pHeight);
 
-      // Player Eyes
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(p.x + p.width - 6, pY + 6, 4, 4);
       ctx.restore();
 
-      // --- DRAW SHADOW CHARACTER ---
+      // Draw shadow character
       const s = eng.shadow;
       const sY = s.y - (s.isSliding ? 18 : s.height);
       const sHeight = s.isSliding ? 18 : s.height;
@@ -637,12 +655,11 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
       ctx.fillRect(s.x, sY, s.width * shadowScale, sHeight * shadowScale);
 
-      // Shadow Eyes
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(s.x + (s.width * shadowScale) - 6, sY + 6, 4, 4);
       ctx.restore();
 
-      // --- DRAW PARTICLES ---
+      // Draw particles
       for (let i = eng.particles.length - 1; i >= 0; i--) {
         const pt = eng.particles[i];
         pt.x += pt.vx;
@@ -662,7 +679,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         ctx.globalAlpha = 1;
       }
 
-      // --- BLACKOUT RANDOM EVENT SPOTLIGHT OVERLAY ---
+      // Blackout event spotlight overlay
       if (eng.currentEvent === 'BLACKOUT') {
         const grad = ctx.createRadialGradient(p.x, p.y - 18, 20, p.x, p.y - 18, 140);
         grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
@@ -676,7 +693,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
     animId = requestAnimationFrame(gameLoop);
     return () => cancelAnimationFrame(animId);
-  }, [gameState, highScore]);
+  }, [gameState, difficulty, highScore]);
 
   return (
     <div className="space-y-4 font-sans">
@@ -704,7 +721,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         <div className="flex items-center gap-4 text-xs font-mono">
           <div className="flex items-center gap-1.5 bg-purple-950/40 border border-purple-500/30 px-3 py-1 rounded-xl text-purple-300">
             <Trophy className="w-4 h-4 text-amber-400" />
-            <span>BEST: <strong>{highScore} m</strong></span>
+            <span>HIGH SCORE: <strong>{highScore}</strong></span>
           </div>
 
           <button
@@ -734,25 +751,43 @@ export default function ShadowShiftGame({ onBackToDoor }) {
           </div>
         )}
 
-        {/* Canvas HUD Overlay */}
+        {/* Canvas LIVE HUD Overlay (SCORE & DISTANCE VISIBLE WHILE PLAYING) */}
         {gameState === 'PLAYING' && (
-          <div className="w-full max-w-[800px] flex items-center justify-between mb-3 text-xs font-mono font-bold text-slate-200 px-2">
+          <div className="w-full max-w-[800px] bg-[#0D1117]/80 backdrop-blur border border-slate-800 p-2.5 rounded-2xl mb-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono font-bold text-slate-200">
             <div className="flex items-center gap-4">
-              <span>DISTANCE: <strong className="text-amber-400 text-sm">{distance} m</strong></span>
+              <span className="bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl">
+                SCORE: <strong className="text-amber-400 text-sm">{score}</strong>
+              </span>
+
+              <span className="bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 rounded-xl">
+                DISTANCE: <strong className="text-sky-300 text-sm">{distance} m</strong>
+              </span>
+
               <span>COMBO: <strong className="text-emerald-400 text-sm">×{combo}</strong></span>
               <span>COINS: <strong className="text-yellow-400 text-sm">🪙 {coins}</strong></span>
             </div>
 
-            {/* Energy Bar */}
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-slate-400">SHADOW ENERGY:</span>
-              <div className="w-28 h-3 bg-slate-900 border border-slate-700 rounded-full overflow-hidden p-0.5">
-                <div 
-                  className="h-full bg-gradient-to-r from-purple-500 to-sky-400 rounded-full transition-all"
-                  style={{ width: `${energy}%` }}
-                />
+            {/* Difficulty Badge & Energy Bar */}
+            <div className="flex items-center gap-3">
+              <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold border ${
+                difficulty === 'EASY' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
+                difficulty === 'MEDIUM' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' :
+                difficulty === 'HARD' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' :
+                'bg-purple-500/20 text-purple-300 border-purple-500/40'
+              }`}>
+                {difficulty}
+              </span>
+
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-slate-400">ENERGY:</span>
+                <div className="w-24 h-2.5 bg-slate-900 border border-slate-700 rounded-full overflow-hidden p-0.5">
+                  <div 
+                    className="h-full bg-gradient-to-r from-purple-500 to-sky-400 rounded-full transition-all"
+                    style={{ width: `${energy}%` }}
+                  />
+                </div>
+                <span className="text-xs text-sky-400">{energy}%</span>
               </div>
-              <span className="text-xs text-sky-400">{energy}%</span>
             </div>
           </div>
         )}
@@ -766,28 +801,56 @@ export default function ShadowShiftGame({ onBackToDoor }) {
             className="w-full h-full object-cover"
           />
 
-          {/* MENU OVERLAY */}
+          {/* MENU OVERLAY WITH DIFFICULTY SELECTOR */}
           {gameState === 'MENU' && (
             <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center space-y-4 z-30 font-mono">
-              <div className="w-16 h-16 rounded-2xl bg-purple-500/20 border-2 border-purple-400 flex items-center justify-center text-3xl shadow-xl shadow-purple-500/20 animate-pulse">
+              <div className="w-14 h-14 rounded-2xl bg-purple-500/20 border-2 border-purple-400 flex items-center justify-center text-3xl shadow-xl shadow-purple-500/20 animate-pulse">
                 🌑
               </div>
 
               <div>
                 <h3 className="text-2xl font-black tracking-wider text-slate-100 uppercase">
-                  SHADOW SHIFT
+                  SHADOW SHIFT v1.0
                 </h3>
                 <p className="text-xs text-purple-300 font-semibold mt-1">
                   "The longer you survive, the less you can see."
                 </p>
               </div>
 
-              <div className="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl text-left text-xs text-slate-300 space-y-2 max-w-sm">
-                <p className="font-bold text-amber-400 border-b border-slate-800 pb-1">🕹️ CONTROLS:</p>
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div><kbd className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">SPACE</kbd> / <kbd className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">↑</kbd> : Jump</div>
-                  <div><kbd className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">↓</kbd> : Slide</div>
-                  <div className="col-span-2"><kbd className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">SHIFT</kbd> : Swap Track with Shadow</div>
+              {/* Difficulty Selector Picker */}
+              <div className="space-y-2 w-full max-w-sm">
+                <label className="text-xs font-bold text-amber-300 block uppercase tracking-wider">
+                  🎯 SELECT GAME DIFFICULTY LEVEL:
+                </label>
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[
+                    { id: 'EASY', label: 'EASY 🟢', color: 'border-emerald-500 text-emerald-300 bg-emerald-950/40' },
+                    { id: 'MEDIUM', label: 'MEDIUM 🟡', color: 'border-amber-500 text-amber-300 bg-amber-950/40' },
+                    { id: 'HARD', label: 'HARD 🔴', color: 'border-rose-500 text-rose-300 bg-rose-950/40' },
+                    { id: 'EXPERT', label: 'EXPERT 🔥', color: 'border-purple-500 text-purple-300 bg-purple-950/40' },
+                  ].map((d) => (
+                    <button
+                      key={d.id}
+                      onClick={() => setDifficulty(d.id)}
+                      className={`py-1.5 rounded-xl border text-[11px] font-bold transition-all ${
+                        difficulty === d.id
+                          ? `${d.color} shadow-lg ring-2 ring-amber-400`
+                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                      }`}
+                    >
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Controls Key map */}
+              <div className="bg-slate-900/90 border border-slate-800 p-3 rounded-2xl text-left text-xs text-slate-300 space-y-1 max-w-sm">
+                <p className="font-bold text-amber-400 border-b border-slate-800 pb-1 text-[11px]">🕹️ CONTROLS:</p>
+                <div className="grid grid-cols-2 gap-2 text-[10px]">
+                  <div><kbd className="bg-slate-800 px-1 py-0.5 rounded border border-slate-700">SPACE</kbd> / <kbd className="bg-slate-800 px-1 py-0.5 rounded border border-slate-700">↑</kbd> : Jump</div>
+                  <div><kbd className="bg-slate-800 px-1 py-0.5 rounded border border-slate-700">↓</kbd> : Slide</div>
+                  <div className="col-span-2"><kbd className="bg-slate-800 px-1 py-0.5 rounded border border-slate-700">SHIFT</kbd> : Swap Track with Shadow</div>
                 </div>
               </div>
 
@@ -796,7 +859,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
                 className="px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500 via-rose-500 to-amber-500 text-slate-950 font-black text-sm tracking-wider shadow-lg hover:brightness-110 transition-all flex items-center gap-2"
               >
                 <Play className="w-5 h-5 fill-current" />
-                <span>START SHADOW RUN</span>
+                <span>START SHADOW RUN ({difficulty})</span>
               </button>
             </div>
           )}
@@ -810,12 +873,16 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
               <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-xs space-y-2 w-64">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">DISTANCE:</span>
-                  <span className="font-bold text-amber-300">{distance} m</span>
+                  <span className="text-slate-400">FINAL SCORE:</span>
+                  <span className="font-bold text-amber-300">{score}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">BEST DISTANCE:</span>
-                  <span className="font-bold text-purple-400">{highScore} m</span>
+                  <span className="text-slate-400">DISTANCE:</span>
+                  <span className="font-bold text-sky-300">{distance} m</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">HIGH SCORE:</span>
+                  <span className="font-bold text-purple-400">{highScore}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">FINAL COMBO:</span>
