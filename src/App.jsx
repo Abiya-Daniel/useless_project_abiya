@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import DoorSimulator from './components/DoorSimulator';
 import QuickDeckPanel from './components/QuickDeckPanel';
+import ArcadeHub from './components/ArcadeHub';
 import AIAnalysisTerminal from './components/AIAnalysisTerminal';
 import VerdictCard from './components/VerdictCard';
 import PersonalitySelector from './components/PersonalitySelector';
@@ -345,16 +346,7 @@ export default function App() {
                   students={students}
                   selectedStudent={selectedStudent}
                   onScanStudent={handleScanStudent}
-                  isOpen={isOpen}
                   isAnalyzing={isAnalyzing}
-                  onOpenLudo={() => setActiveTab('ludo')}
-                  onOpenChess={() => setActiveTab('chess')}
-                  onOpenShadowShift={() => setActiveTab('shadowshift')}
-                  onOpenRacing={() => setActiveTab('racing')}
-                  onOpenSnake={() => setActiveTab('snake')}
-                  onOpenFlappy={() => setActiveTab('flappy')}
-                  onOpenTicTacToe={() => setActiveTab('tictactoe')}
-                  onOpenMemoryMatch={() => setActiveTab('memory')}
                 />
               </div>
 
@@ -389,6 +381,20 @@ export default function App() {
             </div>
 
           </div>
+        )}
+
+        {/* Tab 2: College Arcade Hub (8 Games Lounge) */}
+        {activeTab === 'arcade' && (
+          <ArcadeHub
+            onOpenLudo={() => setActiveTab('ludo')}
+            onOpenChess={() => setActiveTab('chess')}
+            onOpenShadowShift={() => setActiveTab('shadowshift')}
+            onOpenRacing={() => setActiveTab('racing')}
+            onOpenSnake={() => setActiveTab('snake')}
+            onOpenFlappy={() => setActiveTab('flappy')}
+            onOpenTicTacToe={() => setActiveTab('tictactoe')}
+            onOpenMemoryMatch={() => setActiveTab('memory')}
+          />
         )}
 
         {/* Tab 2: Home Ludo Game */}
