@@ -15,7 +15,9 @@ export default function VerdictCard({
   onOpenShadowShift, 
   onOpenRacing,
   onOpenSnake,
-  onOpenFlappy
+  onOpenFlappy,
+  onOpenTicTacToe,
+  onOpenMemoryMatch
 }) {
   const cardRef = useRef(null);
 
@@ -122,7 +124,7 @@ export default function VerdictCard({
           </div>
         </div>
 
-        {/* High Attendance Home Reward Game Hub (6 GAMES ARCADE) */}
+        {/* High Attendance Home Reward Game Hub (8 GAMES ARCADE) */}
         {isHighAttendance && (
           <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-2 border-amber-400/50 rounded-2xl p-5 mb-6 shadow-xl flex flex-col items-center text-center space-y-4">
             
@@ -130,15 +132,15 @@ export default function VerdictCard({
             <div className="flex flex-col items-center justify-center gap-1">
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold font-mono text-xs sm:text-sm uppercase tracking-wider shadow-md">
                 <Gamepad2 className="w-4 h-4 text-amber-400 animate-bounce" />
-                <span>🎮 VEETTIL POYI GAME KALIKKU MONE! (6 ARCADE GAMES)</span>
+                <span>🎮 VEETTIL POYI GAME KALIKKU MONE! (8 ARCADE GAMES)</span>
               </div>
               <p className="text-xs sm:text-sm font-semibold font-malayalam text-slate-200 mt-1 max-w-xl leading-relaxed">
                 Attendance safe aanu! Pick your favorite game to play at home!
               </p>
             </div>
 
-            {/* 6 Game Options Buttons Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 w-full pt-1">
+            {/* 8 Game Options Buttons Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full pt-1">
               
               <button
                 onClick={onOpenLudo}
@@ -192,6 +194,24 @@ export default function VerdictCard({
                 <span className="text-2xl group-hover:scale-110 transition-transform">🐥</span>
                 <span className="font-mono font-extrabold text-yellow-300 text-xs tracking-wider">FLAPPY BTECH</span>
                 <span className="text-[9px] text-slate-400 font-mono">Tap Flap</span>
+              </button>
+
+              <button
+                onClick={onOpenTicTacToe}
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-orange-500/50 hover:border-orange-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
+              >
+                <span className="text-2xl group-hover:scale-110 transition-transform">❌⭕</span>
+                <span className="font-mono font-extrabold text-orange-300 text-xs tracking-wider">TIC-TAC-TOE</span>
+                <span className="text-[9px] text-slate-400 font-mono">X vs O</span>
+              </button>
+
+              <button
+                onClick={onOpenMemoryMatch}
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-indigo-500/50 hover:border-indigo-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
+              >
+                <span className="text-2xl group-hover:scale-110 transition-transform">🎴</span>
+                <span className="font-mono font-extrabold text-indigo-300 text-xs tracking-wider">MEMORY MATCH</span>
+                <span className="text-[9px] text-slate-400 font-mono">Flip Cards</span>
               </button>
 
             </div>

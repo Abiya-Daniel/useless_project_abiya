@@ -1,16 +1,96 @@
 import React from 'react';
-import { Play, Cpu, Radio, ShieldAlert, Sparkles, Volume2, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { Play, Cpu, Radio, ShieldAlert, Sparkles, Volume2, CheckCircle2, Gamepad2, ArrowRight } from 'lucide-react';
 
 export default function QuickDeckPanel({
   students,
   selectedStudent,
   onScanStudent,
-  activePersonality,
-  setActivePersonality,
-  personalities,
   isOpen,
-  isAnalyzing
+  isAnalyzing,
+  onOpenLudo,
+  onOpenChess,
+  onOpenShadowShift,
+  onOpenRacing,
+  onOpenSnake,
+  onOpenFlappy,
+  onOpenTicTacToe,
+  onOpenMemoryMatch
 }) {
+  const gamesList = [
+    {
+      id: 'ludo',
+      name: 'LUDO MATCH',
+      emoji: '🎲',
+      tag: 'CLASSIC 4-PLAYER',
+      badge: 'POPULAR',
+      color: 'from-amber-500/20 to-orange-500/20 border-amber-500/40 text-amber-300',
+      action: onOpenLudo,
+    },
+    {
+      id: 'chess',
+      name: 'CHESS MASTER',
+      emoji: '♟️',
+      tag: 'STRATEGY AI',
+      badge: 'BRAIN BOOSTER',
+      color: 'from-purple-500/20 to-indigo-500/20 border-purple-500/40 text-purple-300',
+      action: onOpenChess,
+    },
+    {
+      id: 'shadowshift',
+      name: 'SHADOW SHIFT',
+      emoji: '🏃💨',
+      tag: 'DUAL RUNNER',
+      badge: 'REFLEX',
+      color: 'from-rose-500/20 to-red-500/20 border-rose-500/40 text-rose-300',
+      action: onOpenShadowShift,
+    },
+    {
+      id: 'racing',
+      name: 'HIGHWAY RIDER',
+      emoji: '🏎️',
+      tag: '2D SPEEDWAY',
+      badge: 'ACTION',
+      color: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/40 text-emerald-300',
+      action: onOpenRacing,
+    },
+    {
+      id: 'snake',
+      name: 'CANTEEN SNAKE',
+      emoji: '🐍',
+      tag: 'SAMOSA & CHAI',
+      badge: 'RETRO 2D',
+      color: 'from-green-500/20 to-emerald-500/20 border-green-500/40 text-green-300',
+      action: onOpenSnake,
+    },
+    {
+      id: 'flappy',
+      name: 'FLAPPY BTECH',
+      emoji: '🐥',
+      tag: 'TAP TO FLY',
+      badge: 'CHALLENGE',
+      color: 'from-sky-500/20 to-blue-500/20 border-sky-500/40 text-sky-300',
+      action: onOpenFlappy,
+    },
+    {
+      id: 'tictactoe',
+      name: 'TIC-TAC-TOE PRO',
+      emoji: '❌⭕',
+      tag: 'X vs O VS AI',
+      badge: 'NEW 🌟',
+      color: 'from-amber-500/20 to-rose-500/20 border-amber-500/40 text-amber-300',
+      action: onOpenTicTacToe,
+    },
+    {
+      id: 'memory',
+      name: 'MEMORY MATCH',
+      emoji: '🎴',
+      tag: 'FLIP CAMPUS CARDS',
+      badge: 'NEW 🌟',
+      color: 'from-indigo-500/20 to-pink-500/20 border-indigo-500/40 text-indigo-300',
+      action: onOpenMemoryMatch,
+    },
+  ];
+
   return (
     <div className="space-y-6 animate-fade-in">
       
@@ -104,38 +184,42 @@ export default function QuickDeckPanel({
         </div>
       </div>
 
-      {/* 2. Teacher Personality Switcher Bar */}
+      {/* 2. College Arcade Games Hub (Replacing Teacher Switcher) */}
       <div className="bg-[#161B22] bg-theme-card border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-3">
         <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="text-base">{activePersonality.emoji}</span>
+            <Gamepad2 className="w-4 h-4 text-amber-400" />
             <h3 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-              🧑‍🏫 QUICK TEACHER PERSONALITY SELECTOR
+              🎮 COLLEGE ARCADE HUB • GOOD STUDENT REWARDS (8 GAMES)
             </h3>
           </div>
-          <span className="text-[10px] font-mono text-amber-400 font-bold">
-            ACTIVE: {activePersonality.name}
+          <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
+            &ge;85% ATTENDANCE UNLOCKED
           </span>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-          {personalities.map((p) => {
-            const isActive = activePersonality.id === p.id;
-            return (
-              <button
-                key={p.id}
-                onClick={() => setActivePersonality(p)}
-                className={`p-2.5 rounded-xl border text-left transition-all flex flex-col items-center justify-center text-center gap-1 ${
-                  isActive
-                    ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-md'
-                    : 'bg-[#0D1117] border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-                }`}
-              >
-                <span className="text-xl">{p.emoji}</span>
-                <span className="text-[11px] font-bold truncate max-w-full font-sans">{p.name}</span>
-              </button>
-            );
-          })}
+        {/* 8-Game Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {gamesList.map((g) => (
+            <button
+              key={g.id}
+              onClick={g.action}
+              className={`p-3 rounded-2xl bg-gradient-to-br ${g.color} border transition-all text-left flex flex-col justify-between gap-2 hover:scale-[1.02] shadow-md group`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-2xl group-hover:scale-110 transition-transform">{g.emoji}</span>
+                <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900/80 border border-slate-700 text-slate-300">
+                  {g.badge}
+                </span>
+              </div>
+              <div>
+                <h4 className="text-xs font-extrabold font-mono tracking-tight text-slate-100 group-hover:text-amber-300 transition-colors">
+                  {g.name}
+                </h4>
+                <p className="text-[9px] font-mono opacity-80 mt-0.5">{g.tag}</p>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 

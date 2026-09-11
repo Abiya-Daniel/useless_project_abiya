@@ -14,6 +14,8 @@ import ShadowShiftGame from './components/ShadowShiftGame';
 import CarRacingGame from './components/CarRacingGame';
 import SnakeGame from './components/SnakeGame';
 import FlappyGame from './components/FlappyGame';
+import TicTacToeGame from './components/TicTacToeGame';
+import MemoryMatchGame from './components/MemoryMatchGame';
 
 import { DEFAULT_STUDENTS } from './data/students';
 import { PERSONALITIES } from './data/personalities';
@@ -58,7 +60,7 @@ export default function App() {
     }
   ]);
 
-  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift, #racing, #snake, #flappy)
+  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift, #racing, #snake, #flappy, #tictactoe, #memory)
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#ludo') {
@@ -73,6 +75,10 @@ export default function App() {
         setActiveTab('snake');
       } else if (window.location.hash === '#flappy') {
         setActiveTab('flappy');
+      } else if (window.location.hash === '#tictactoe') {
+        setActiveTab('tictactoe');
+      } else if (window.location.hash === '#memory') {
+        setActiveTab('memory');
       }
     };
     handleHashChange();
@@ -236,8 +242,8 @@ export default function App() {
                     <span className="text-xl">⚡</span>
                     <h4 className="text-xs font-extrabold tracking-wider text-amber-400 uppercase font-mono flex items-center gap-2 flex-wrap">
                       <span>INVERSE ATTENDANCE RULE & ARCADE GAME REWARDS</span>
-                      <span className="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30">
-                        6 GAMES READY 🎮
+                      <span className="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30 font-bold">
+                        8 GAMES READY 🎮
                       </span>
                     </h4>
                   </div>
@@ -253,7 +259,7 @@ export default function App() {
                           GOOD STUDENT (&ge;85% ATTENDANCE)
                         </div>
                         <div className="text-[11px] text-slate-300 font-malayalam">
-                          STAY HOME & PLAY CHESS • LUDO • SHADOW SHIFT • RIDER • SNAKE • FLAPPY
+                          STAY HOME & PLAY CHESS • LUDO • SHADOW SHIFT • RIDER • SNAKE • FLAPPY • TIC-TAC-TOE • MEMORY MATCH
                         </div>
                       </div>
                     </div>
@@ -339,11 +345,16 @@ export default function App() {
                   students={students}
                   selectedStudent={selectedStudent}
                   onScanStudent={handleScanStudent}
-                  activePersonality={activePersonality}
-                  setActivePersonality={setActivePersonality}
-                  personalities={PERSONALITIES}
                   isOpen={isOpen}
                   isAnalyzing={isAnalyzing}
+                  onOpenLudo={() => setActiveTab('ludo')}
+                  onOpenChess={() => setActiveTab('chess')}
+                  onOpenShadowShift={() => setActiveTab('shadowshift')}
+                  onOpenRacing={() => setActiveTab('racing')}
+                  onOpenSnake={() => setActiveTab('snake')}
+                  onOpenFlappy={() => setActiveTab('flappy')}
+                  onOpenTicTacToe={() => setActiveTab('tictactoe')}
+                  onOpenMemoryMatch={() => setActiveTab('memory')}
                 />
               </div>
 
@@ -369,6 +380,8 @@ export default function App() {
                     onOpenRacing={() => setActiveTab('racing')}
                     onOpenSnake={() => setActiveTab('snake')}
                     onOpenFlappy={() => setActiveTab('flappy')}
+                    onOpenTicTacToe={() => setActiveTab('tictactoe')}
+                    onOpenMemoryMatch={() => setActiveTab('memory')}
                   />
                 )}
               </div>
@@ -421,7 +434,21 @@ export default function App() {
           />
         )}
 
-        {/* Tab 8: Teacher Personalities */}
+        {/* Tab 8: Tic-Tac-Toe Pro Game */}
+        {activeTab === 'tictactoe' && (
+          <TicTacToeGame
+            onBackToDoor={() => setActiveTab('door')}
+          />
+        )}
+
+        {/* Tab 9: Campus Memory Match Challenge */}
+        {activeTab === 'memory' && (
+          <MemoryMatchGame
+            onBackToDoor={() => setActiveTab('door')}
+          />
+        )}
+
+        {/* Tab 10: Teacher Personalities */}
         {activeTab === 'personality' && (
           <PersonalitySelector
             activePersonality={activePersonality}
@@ -433,7 +460,7 @@ export default function App() {
           />
         )}
 
-        {/* Tab 9: Student Roster & Teacher QR Cards */}
+        {/* Tab 11: Student Roster & Teacher QR Cards */}
         {activeTab === 'students' && (
           <StudentManager
             students={students}
@@ -442,7 +469,7 @@ export default function App() {
           />
         )}
 
-        {/* Tab 10: Hardware & Servo Telemetry */}
+        {/* Tab 12: Hardware & Servo Telemetry */}
         {activeTab === 'telemetry' && (
           <HardwareLog
             logs={telemetryLogs}
@@ -456,7 +483,7 @@ export default function App() {
       <footer className="border-t border-slate-800/80 bg-[#0D1117] bg-theme-footer py-4 mt-8 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 text-center text-xs font-mono text-slate-500 text-theme-muted flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>🚪 CLASSIL KERANDA MONE v2.0 • KERALA COLLEGE INNOVATION LAB</span>
-          <span className="font-malayalam text-amber-500 font-semibold">"Good student &rarr; Veettil poyi Arcade Games kalikku mone!" 🎲♟️🏎️🐍🐥</span>
+          <span className="font-malayalam text-amber-500 font-semibold">"Good student &rarr; Veettil poyi Arcade Games kalikku mone!" 🎲♟️🏎️🐍🐥❌⭕🎴</span>
         </div>
       </footer>
 
