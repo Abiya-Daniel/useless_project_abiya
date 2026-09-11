@@ -208,6 +208,19 @@ export default function App() {
     addLog('INFO', 'STUDENT_ROSTER', `Added new student ${newStudent.name} (${newStudent.attendance}%).`);
   };
 
+  const handleUpdateStudent = (updatedStudent) => {
+    setStudents(prev => prev.map(s => s.id === updatedStudent.id ? updatedStudent : s));
+    if (selectedStudent?.id === updatedStudent.id) {
+      setSelectedStudent(updatedStudent);
+    }
+    addLog('INFO', 'STUDENT_ROSTER', `Updated profile for ${updatedStudent.name} (${updatedStudent.attendance}%).`);
+  };
+
+  const handleReorderStudents = (newList) => {
+    setStudents(newList);
+    addLog('INFO', 'STUDENT_ROSTER', `Rearranged student roster order.`);
+  };
+
   return (
     <div className={`min-h-screen font-sans flex flex-col justify-between transition-colors duration-300 ${
       isDarkMode ? 'bg-[#090D14] text-slate-100 dark' : 'bg-slate-50 text-slate-900 light'
@@ -472,6 +485,8 @@ export default function App() {
           <StudentManager
             students={students}
             onAddStudent={handleAddStudent}
+            onUpdateStudent={handleUpdateStudent}
+            onReorderStudents={handleReorderStudents}
             onScanStudent={handleScanStudent}
           />
         )}
