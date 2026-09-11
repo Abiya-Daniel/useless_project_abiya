@@ -118,7 +118,7 @@ export default function VerdictCard({
         </div>
 
         {/* High Attendance Home Reward Banner */}
-        {isHighAttendance && (
+        {student.attendance >= 85 && (
           <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-2 border-amber-400/50 rounded-2xl p-4 mb-6 shadow-xl flex items-center justify-between gap-4 font-mono">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-xl shrink-0">
@@ -129,17 +129,24 @@ export default function VerdictCard({
                   VEETTIL POYI GAME KALIKKU MONE!
                 </h4>
                 <p className="text-[11px] text-slate-300 font-malayalam mt-0.5">
-                  Attendance safe aanu! Play any of the 8 arcade games in the left panel!
+                  Attendance safe aanu ({student.attendance}%)! Click to open the 8 Arcade Games!
                 </p>
               </div>
             </div>
 
             <button
-              onClick={onOpenLudo}
-              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shrink-0 shadow-md hover:brightness-110"
+              onClick={() => {
+                const el = document.getElementById('arcade-games-deck');
+                if (el) {
+                  el.scrollIntoView({ behavior: 'smooth' });
+                } else if (onOpenLudo) {
+                  onOpenLudo();
+                }
+              }}
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-rose-500 to-purple-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shrink-0 shadow-lg hover:brightness-110 cursor-pointer animate-pulse"
             >
               <Gamepad2 className="w-4 h-4" />
-              <span>PLAY GAME</span>
+              <span>PLAY NOW &rarr;</span>
             </button>
           </div>
         )}

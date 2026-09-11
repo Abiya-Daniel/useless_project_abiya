@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Radio, Gamepad2, Sparkles, ChevronRight } from 'lucide-react';
+import { Play, Radio, Gamepad2, Lock, ChevronRight, Sparkles } from 'lucide-react';
 
 export default function QuickDeckPanel({
   students,
@@ -15,6 +15,8 @@ export default function QuickDeckPanel({
   onOpenTicTacToe,
   onOpenMemoryMatch
 }) {
+  const isEligibleForGames = selectedStudent && selectedStudent.attendance >= 85;
+
   const arcadeGames = [
     {
       id: 'ludo',
@@ -175,41 +177,59 @@ export default function QuickDeckPanel({
         </div>
       </div>
 
-      {/* 2. College Arcade Games Hub (Integrated directly in Door Simulator) */}
-      <div className="bg-[#161B22] bg-theme-card border border-slate-800 rounded-3xl p-5 shadow-2xl space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
-          <div className="flex items-center gap-2">
-            <Gamepad2 className="w-4 h-4 text-amber-400" />
-            <h3 className="text-xs font-mono font-bold text-slate-200 uppercase tracking-wider">
-              🎮 COLLEGE ARCADE HUB • GOOD STUDENT REWARDS (8 GAMES)
-            </h3>
-          </div>
-          <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">
-            🔒 &ge;85% STAY HOME
-          </span>
-        </div>
+      {/* 2. College Arcade Games Hub (Only Visible when Attendance >= 85%) */}
+      <div id="arcade-games-deck">
+        {isEligibleForGames ? (
+          <div className="bg-[#161B22] bg-theme-card border-2 border-amber-400/50 rounded-3xl p-5 shadow-2xl space-y-3 animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+              <div className="flex items-center gap-2">
+                <Gamepad2 className="w-4 h-4 text-amber-400 animate-bounce" />
+                <h3 className="text-xs font-mono font-extrabold text-amber-300 uppercase tracking-wider">
+                  🎮 UNLOCKED ARCADE HUB • GOOD STUDENT REWARDS (8 GAMES)
+                </h3>
+              </div>
+              <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2.5 py-0.5 rounded-full font-bold">
+                🔓 {selectedStudent.attendance}% ATTENDANCE REWARD
+              </span>
+            </div>
 
-        {/* 8 Game Launcher Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {arcadeGames.map((game) => (
-            <button
-              key={game.id}
-              onClick={game.action}
-              className={`p-3 rounded-2xl bg-gradient-to-br ${game.color} border transition-all text-left flex flex-col justify-between gap-1.5 hover:scale-[1.03] shadow-md group cursor-pointer`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-2xl group-hover:scale-110 transition-transform">{game.emoji}</span>
-                <ChevronRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
-              </div>
-              <div>
-                <h4 className="text-xs font-extrabold font-mono tracking-tight text-slate-100 group-hover:text-amber-300 transition-colors truncate">
-                  {game.name}
-                </h4>
-                <p className="text-[9px] font-mono opacity-75 truncate">{game.tag}</p>
-              </div>
-            </button>
-          ))}
-        </div>
+            {/* 8 Game Launcher Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              {arcadeGames.map((game) => (
+                <button
+                  key={game.id}
+                  onClick={game.action}
+                  className={`p-3 rounded-2xl bg-gradient-to-br ${game.color} border transition-all text-left flex flex-col justify-between gap-1.5 hover:scale-[1.04] shadow-lg group cursor-pointer`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-2xl group-hover:scale-110 transition-transform">{game.emoji}</span>
+                    <ChevronRight className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-extrabold font-mono tracking-tight text-slate-100 group-hover:text-amber-300 transition-colors truncate">
+                      {game.name}
+                    </h4>
+                    <p className="text-[9px] font-mono opacity-75 truncate">{game.tag}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-[#161B22] bg-theme-card border border-slate-800 rounded-3xl p-5 shadow-xl flex flex-col items-center justify-center text-center space-y-2">
+            <div className="w-10 h-10 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg">
+              <Lock className="w-5 h-5 text-slate-400" />
+            </div>
+            <h4 className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
+              🔒 ARCADE REWARD GAMES (LOCKED FOR ATTENDANCE &lt; 85%)
+            </h4>
+            <p className="text-xs text-slate-400 font-malayalam max-w-md leading-relaxed">
+              {selectedStudent
+                ? `"${selectedStudent.name}" has ${selectedStudent.attendance}% attendance (<85%). Door opens to force entry into class! Games unlock ONLY for good students (≥85%).`
+                : 'Scan or select a student card with ≥85% attendance to unlock the 8 home arcade games!'}
+            </p>
+          </div>
+        )}
       </div>
 
     </div>
