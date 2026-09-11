@@ -3,7 +3,20 @@ import { Volume2, Download, Share2, AlertTriangle, CheckCircle, XCircle, Sparkle
 import { QRCodeSVG } from 'qrcode.react';
 import html2canvas from 'html2canvas';
 
-export default function VerdictCard({ student, verdict, isOpen, activePersonality, onReplayAudio, onRescan, onOpenLudo, onOpenChess, onOpenShadowShift, onOpenRacing }) {
+export default function VerdictCard({ 
+  student, 
+  verdict, 
+  isOpen, 
+  activePersonality, 
+  onReplayAudio, 
+  onRescan, 
+  onOpenLudo, 
+  onOpenChess, 
+  onOpenShadowShift, 
+  onOpenRacing,
+  onOpenSnake,
+  onOpenFlappy
+}) {
   const cardRef = useRef(null);
 
   if (!student || !verdict) return null;
@@ -109,58 +122,76 @@ export default function VerdictCard({ student, verdict, isOpen, activePersonalit
           </div>
         </div>
 
-        {/* High Attendance Home Reward Game Hub (LUDO, CHESS, SHADOW SHIFT, CAR RACING Picker) */}
+        {/* High Attendance Home Reward Game Hub (6 GAMES ARCADE) */}
         {isHighAttendance && (
           <div className="bg-gradient-to-r from-amber-500/15 via-rose-500/15 to-purple-500/15 border-2 border-amber-400/50 rounded-2xl p-5 mb-6 shadow-xl flex flex-col items-center text-center space-y-4">
             
             {/* Centered Heading */}
             <div className="flex flex-col items-center justify-center gap-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold font-mono text-xs sm:text-sm uppercase tracking-wider shadow-md">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 font-extrabold font-mono text-xs sm:text-sm uppercase tracking-wider shadow-md">
                 <Gamepad2 className="w-4 h-4 text-amber-400 animate-bounce" />
-                <span>🎮 VEETTIL POYI GAME KALIKKU MONE!</span>
+                <span>🎮 VEETTIL POYI GAME KALIKKU MONE! (6 ARCADE GAMES)</span>
               </div>
               <p className="text-xs sm:text-sm font-semibold font-malayalam text-slate-200 mt-1 max-w-xl leading-relaxed">
-                Attendance safe aanu! Choose <span className="text-emerald-400 font-bold">LUDO</span>, <span className="text-amber-400 font-bold">CHESS</span>, <span className="text-purple-400 font-bold">SHADOW SHIFT</span>, or <span className="text-rose-400 font-bold">CAR RACING</span> to play at home!
+                Attendance safe aanu! Pick your favorite game to play at home!
               </p>
             </div>
 
-            {/* Game Options Buttons (Perfectly Centered & Aligned) */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full pt-1">
+            {/* 6 Game Options Buttons Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 w-full pt-1">
               
               <button
                 onClick={onOpenLudo}
-                className="p-3.5 rounded-2xl bg-[#161B22] border-2 border-emerald-500/50 hover:border-emerald-400 flex flex-col items-center text-center justify-center gap-1.5 transition-all hover:scale-105 group shadow-lg"
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-emerald-500/50 hover:border-emerald-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
               >
                 <span className="text-2xl group-hover:scale-110 transition-transform">🎲</span>
                 <span className="font-mono font-extrabold text-emerald-300 text-xs tracking-wider">LUDO</span>
-                <span className="text-[10px] text-slate-400 font-mono">1 User vs 3 Bots</span>
+                <span className="text-[9px] text-slate-400 font-mono">1 vs 3 Bots</span>
               </button>
 
               <button
                 onClick={onOpenChess}
-                className="p-3.5 rounded-2xl bg-[#161B22] border-2 border-amber-500/50 hover:border-amber-400 flex flex-col items-center text-center justify-center gap-1.5 transition-all hover:scale-105 group shadow-lg"
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-amber-500/50 hover:border-amber-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
               >
                 <span className="text-2xl group-hover:scale-110 transition-transform">♟️</span>
                 <span className="font-mono font-extrabold text-amber-300 text-xs tracking-wider">CHESS</span>
-                <span className="text-[10px] text-slate-400 font-mono">White ♔ vs AI</span>
+                <span className="text-[9px] text-slate-400 font-mono">White vs AI</span>
               </button>
 
               <button
                 onClick={onOpenShadowShift}
-                className="p-3.5 rounded-2xl bg-[#161B22] border-2 border-purple-500/50 hover:border-purple-400 flex flex-col items-center text-center justify-center gap-1.5 transition-all hover:scale-105 group shadow-lg"
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-purple-500/50 hover:border-purple-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
               >
                 <span className="text-2xl group-hover:scale-110 transition-transform">🌑</span>
                 <span className="font-mono font-extrabold text-purple-300 text-xs tracking-wider">SHADOW SHIFT</span>
-                <span className="text-[10px] text-slate-400 font-mono">Dual Runner</span>
+                <span className="text-[9px] text-slate-400 font-mono">Dual Runner</span>
               </button>
 
               <button
                 onClick={onOpenRacing}
-                className="p-3.5 rounded-2xl bg-[#161B22] border-2 border-rose-500/50 hover:border-rose-400 flex flex-col items-center text-center justify-center gap-1.5 transition-all hover:scale-105 group shadow-lg"
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-rose-500/50 hover:border-rose-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
               >
                 <span className="text-2xl group-hover:scale-110 transition-transform">🏎️</span>
                 <span className="font-mono font-extrabold text-rose-300 text-xs tracking-wider">HIGHWAY RIDER</span>
-                <span className="text-[10px] text-slate-400 font-mono">Car Racing</span>
+                <span className="text-[9px] text-slate-400 font-mono">Car Racing</span>
+              </button>
+
+              <button
+                onClick={onOpenSnake}
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-teal-500/50 hover:border-teal-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
+              >
+                <span className="text-2xl group-hover:scale-110 transition-transform">🐍</span>
+                <span className="font-mono font-extrabold text-teal-300 text-xs tracking-wider">SNAKE</span>
+                <span className="text-[9px] text-slate-400 font-mono">Canteen Snake</span>
+              </button>
+
+              <button
+                onClick={onOpenFlappy}
+                className="p-3 rounded-2xl bg-[#161B22] border-2 border-yellow-500/50 hover:border-yellow-400 flex flex-col items-center text-center justify-center gap-1 transition-all hover:scale-105 group shadow-lg"
+              >
+                <span className="text-2xl group-hover:scale-110 transition-transform">🐥</span>
+                <span className="font-mono font-extrabold text-yellow-300 text-xs tracking-wider">FLAPPY BTECH</span>
+                <span className="text-[9px] text-slate-400 font-mono">Tap Flap</span>
               </button>
 
             </div>

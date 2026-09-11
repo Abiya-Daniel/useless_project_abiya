@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import DoorSimulator from './components/DoorSimulator';
+import QuickDeckPanel from './components/QuickDeckPanel';
 import AIAnalysisTerminal from './components/AIAnalysisTerminal';
 import VerdictCard from './components/VerdictCard';
 import PersonalitySelector from './components/PersonalitySelector';
@@ -11,6 +12,8 @@ import LudoGame from './components/LudoGame';
 import ChessGame from './components/ChessGame';
 import ShadowShiftGame from './components/ShadowShiftGame';
 import CarRacingGame from './components/CarRacingGame';
+import SnakeGame from './components/SnakeGame';
+import FlappyGame from './components/FlappyGame';
 
 import { DEFAULT_STUDENTS } from './data/students';
 import { PERSONALITIES } from './data/personalities';
@@ -55,7 +58,7 @@ export default function App() {
     }
   ]);
 
-  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift, #racing)
+  // Hash listener for mobile QR code launcher (#ludo, #chess, #shadowshift, #racing, #snake, #flappy)
   useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash === '#ludo') {
@@ -66,6 +69,10 @@ export default function App() {
         setActiveTab('shadowshift');
       } else if (window.location.hash === '#racing') {
         setActiveTab('racing');
+      } else if (window.location.hash === '#snake') {
+        setActiveTab('snake');
+      } else if (window.location.hash === '#flappy') {
+        setActiveTab('flappy');
       }
     };
     handleHashChange();
@@ -220,48 +227,84 @@ export default function App() {
           <div className="space-y-6">
             
             {/* Quick Banner Alert */}
-            <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-emerald-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">😂</span>
-                <div>
-                  <h4 className="text-xs font-bold text-amber-300 uppercase font-mono">
-                    INVERSE ATTENDANCE RULE + GAME REWARDS:
-                  </h4>
-                  <p className="text-xs text-slate-300 text-theme-muted font-malayalam mt-0.5">
-                    <strong>Good Student (&ge;85%)</strong> &rarr; 🔒 STAY HOME & PLAY CHESS/LUDO/SHADOW SHIFT | <strong>Bad Student (&lt;75%)</strong> &rarr; 🟢 ENTER CLASS
-                  </p>
+            <div className="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-rose-500/10 border border-amber-500/30 rounded-2xl p-4 shadow-xl backdrop-blur-md">
+              <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4">
+                
+                {/* Rule Banner Content */}
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">⚡</span>
+                    <h4 className="text-xs font-extrabold tracking-wider text-amber-400 uppercase font-mono flex items-center gap-2 flex-wrap">
+                      <span>INVERSE ATTENDANCE RULE & ARCADE GAME REWARDS</span>
+                      <span className="px-2 py-0.5 text-[10px] bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30">
+                        6 GAMES READY 🎮
+                      </span>
+                    </h4>
+                  </div>
+
+                  {/* Good vs Bad Student Rule Badges Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
+                    <div className="bg-rose-950/40 border border-rose-500/40 rounded-xl p-2.5 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-rose-500/20 flex items-center justify-center text-lg shrink-0">
+                        🔒
+                      </div>
+                      <div>
+                        <div className="font-bold text-rose-300 font-mono">
+                          GOOD STUDENT (&ge;85% ATTENDANCE)
+                        </div>
+                        <div className="text-[11px] text-slate-300 font-malayalam">
+                          STAY HOME & PLAY CHESS • LUDO • SHADOW SHIFT • RIDER • SNAKE • FLAPPY
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-2.5 flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-lg shrink-0">
+                        🟢
+                      </div>
+                      <div>
+                        <div className="font-bold text-emerald-300 font-mono">
+                          BAD STUDENT (&lt;75% ATTENDANCE)
+                        </div>
+                        <div className="text-[11px] text-slate-300 font-malayalam">
+                          DOOR UNLOCKS &rarr; FORCED TO ENTER CLASS & LISTEN TO LECTURE!
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Camera Scanner Toggle Button */}
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <button
-                  onClick={() => setShowCameraScanner(!showCameraScanner)}
-                  className={`w-full sm:w-auto px-4 py-2 rounded-xl text-xs font-mono font-bold border transition-all flex items-center justify-center gap-2 ${
-                    showCameraScanner
-                      ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
-                      : 'bg-gradient-to-r from-amber-500 to-emerald-500 text-slate-950 border-amber-400 hover:brightness-110 shadow-lg'
-                  }`}
-                >
-                  <Camera className="w-4 h-4" />
-                  <span>{showCameraScanner ? 'HIDE CAMERA SCANNER' : '📷 OPEN DEVICE CAMERA & SCAN'}</span>
-                </button>
+                {/* Camera Scanner & Selector Action Group */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+                  <button
+                    onClick={() => setShowCameraScanner(!showCameraScanner)}
+                    className={`px-4 py-2.5 rounded-xl text-xs font-mono font-bold border transition-all flex items-center justify-center gap-2 ${
+                      showCameraScanner
+                        ? 'bg-rose-500/20 border-rose-500/40 text-rose-300 hover:bg-rose-500/30'
+                        : 'bg-gradient-to-r from-amber-500 via-rose-500 to-emerald-500 text-slate-950 border-amber-400 hover:brightness-110 shadow-lg font-black'
+                    }`}
+                  >
+                    <Camera className="w-4 h-4" />
+                    <span>{showCameraScanner ? 'HIDE CAMERA SCANNER' : '📷 SCAN QR CODE'}</span>
+                  </button>
 
-                <select
-                  onChange={(e) => {
-                    const st = students.find(s => s.id === e.target.value);
-                    if (st) handleScanStudent(st);
-                  }}
-                  value={selectedStudent ? selectedStudent.id : ''}
-                  className="w-full sm:w-auto bg-[#0D1117] border border-slate-700 text-xs font-mono text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-amber-400"
-                >
-                  <option value="" disabled>Select Student...</option>
-                  {students.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.avatar} {s.name} ({s.attendance}%)
-                    </option>
-                  ))}
-                </select>
+                  <select
+                    onChange={(e) => {
+                      const st = students.find(s => s.id === e.target.value);
+                      if (st) handleScanStudent(st);
+                    }}
+                    value={selectedStudent ? selectedStudent.id : ''}
+                    className="bg-[#0D1117] bg-theme-card border border-slate-700 text-xs font-mono text-slate-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="" disabled>Select Student Card...</option>
+                    {students.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.avatar} {s.name} ({s.attendance}%)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
               </div>
             </div>
 
@@ -281,7 +324,7 @@ export default function App() {
             {/* Main Interactive Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
-              {/* Left Column: 3D Door Simulator (7 Cols) */}
+              {/* Left Column: 3D Door Simulator & Quick Scan Deck (7 Cols) */}
               <div className="lg:col-span-7 space-y-6">
                 <DoorSimulator
                   isOpen={isOpen}
@@ -290,6 +333,17 @@ export default function App() {
                   verdict={verdict}
                   isSpeaking={isSpeaking}
                   activePersonality={activePersonality}
+                />
+
+                <QuickDeckPanel
+                  students={students}
+                  selectedStudent={selectedStudent}
+                  onScanStudent={handleScanStudent}
+                  activePersonality={activePersonality}
+                  setActivePersonality={setActivePersonality}
+                  personalities={PERSONALITIES}
+                  isOpen={isOpen}
+                  isAnalyzing={isAnalyzing}
                 />
               </div>
 
@@ -313,6 +367,8 @@ export default function App() {
                     onOpenChess={() => setActiveTab('chess')}
                     onOpenShadowShift={() => setActiveTab('shadowshift')}
                     onOpenRacing={() => setActiveTab('racing')}
+                    onOpenSnake={() => setActiveTab('snake')}
+                    onOpenFlappy={() => setActiveTab('flappy')}
                   />
                 )}
               </div>
@@ -351,7 +407,21 @@ export default function App() {
           />
         )}
 
-        {/* Tab 4: Teacher Personalities */}
+        {/* Tab 6: Canteen Snake 2D Game */}
+        {activeTab === 'snake' && (
+          <SnakeGame
+            onBackToDoor={() => setActiveTab('door')}
+          />
+        )}
+
+        {/* Tab 7: Flappy BTech Tap-to-Fly Game */}
+        {activeTab === 'flappy' && (
+          <FlappyGame
+            onBackToDoor={() => setActiveTab('door')}
+          />
+        )}
+
+        {/* Tab 8: Teacher Personalities */}
         {activeTab === 'personality' && (
           <PersonalitySelector
             activePersonality={activePersonality}
@@ -363,7 +433,7 @@ export default function App() {
           />
         )}
 
-        {/* Tab 5: Student Roster & Teacher QR Cards */}
+        {/* Tab 9: Student Roster & Teacher QR Cards */}
         {activeTab === 'students' && (
           <StudentManager
             students={students}
@@ -372,7 +442,7 @@ export default function App() {
           />
         )}
 
-        {/* Tab 6: Hardware & Servo Telemetry */}
+        {/* Tab 10: Hardware & Servo Telemetry */}
         {activeTab === 'telemetry' && (
           <HardwareLog
             logs={telemetryLogs}
@@ -386,7 +456,7 @@ export default function App() {
       <footer className="border-t border-slate-800/80 bg-[#0D1117] bg-theme-footer py-4 mt-8 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 text-center text-xs font-mono text-slate-500 text-theme-muted flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>🚪 CLASSIL KERANDA MONE v2.0 • KERALA COLLEGE INNOVATION LAB</span>
-          <span className="font-malayalam text-amber-500 font-semibold">"Good student &rarr; Veettil poyi Ludo/Chess kalikku mone!" 🎲♟️</span>
+          <span className="font-malayalam text-amber-500 font-semibold">"Good student &rarr; Veettil poyi Arcade Games kalikku mone!" 🎲♟️🏎️🐍🐥</span>
         </div>
       </footer>
 
