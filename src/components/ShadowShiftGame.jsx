@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, RotateCcw, Volume2, VolumeX, Shield, Zap, Sparkles, Pause, ArrowLeft, Gamepad2, Trophy, Award, Flame, CheckCircle } from 'lucide-react';
+import { Play, RotateCcw, Volume2, VolumeX, Shield, Zap, Sparkles, Pause, ArrowLeft, Gamepad2, Trophy, Award, Clock, Flame, CheckCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 // Simple Web Audio API sound synthesizer
@@ -79,8 +79,10 @@ export default function ShadowShiftGame({ onBackToDoor }) {
   const [gameState, setGameState] = useState('MENU'); // 'MENU', 'PLAYING', 'PAUSED', 'GAMEOVER'
   const [difficulty, setDifficulty] = useState('MEDIUM'); // 'EASY', 'MEDIUM', 'HARD', 'EXPERT'
   
+  // Live HUD States
   const [score, setScore] = useState(0);
   const [distance, setDistance] = useState(0);
+  const [elapsedTimeStr, setElapsedTimeStr] = useState('00:00');
   const [combo, setCombo] = useState(1);
   const [coins, setCoins] = useState(0);
   const [highScore, setHighScore] = useState(() => {
@@ -92,12 +94,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
   const [soundMuted, setSoundMuted] = useState(false);
   const [closeCallNotice, setCloseCallNotice] = useState(null);
 
-  // Game Engine Mutable References
+  // Game Engine Mutable References (Prevents re-triggering React useEffect loops)
   const engine = useRef({
     animId: null,
     lastTime: 0,
+    startTime: 0,
+    elapsedSeconds: 0,
     speed: 6,
     distanceMeter: 0,
+    calculatedScore: 0,
     coinsCollected: 0,
     comboMultiplier: 1,
     energyLevel: 100,
@@ -105,6 +110,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     shieldsLeft: 0,
     slowTimeActive: false,
     scoreMultiplier: 1,
+    frameCount: 0,
     
     // Tracks configuration
     topTrackY: 160,
@@ -140,12 +146,11 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     obstacles: [],
     particles: [],
     powerups: [],
-    floatingTexts: [],
 
     // Random Event Engine
     currentEvent: null, // 'BLACKOUT', 'MIRROR', 'GIANT', 'SHADOW_RAIN'
     eventTimer: 0,
-    nextEventIn: 25,
+    nextEventIn: 20,
 
     // Controls
     keys: {},
@@ -267,10 +272,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     }
   };
 
+  const formatTime = (totalSecs) => {
+    const mins = Math.floor(totalSecs / 60);
+    const secs = Math.floor(totalSecs % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const startGame = () => {
     const eng = engine.current;
     
-    // Configure settings based on chosen difficulty
     let startSpeed = 6;
     let scoreMult = 1;
     let initialShields = 0;
@@ -293,11 +303,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
       initialShields = 0;
     }
 
+    eng.startTime = Date.now();
+    eng.elapsedSeconds = 0;
+    eng.frameCount = 0;
     eng.speed = startSpeed;
     eng.scoreMultiplier = scoreMult;
     eng.shieldsLeft = initialShields;
     eng.shieldActive = initialShields > 0;
     eng.distanceMeter = 0;
+    eng.calculatedScore = 0;
     eng.coinsCollected = 0;
     eng.comboMultiplier = 1;
     eng.energyLevel = 100;
@@ -305,7 +319,6 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     eng.obstacles = [];
     eng.particles = [];
     eng.powerups = [];
-    eng.floatingTexts = [];
     eng.currentEvent = null;
     eng.eventTimer = 0;
     eng.nextEventIn = 20;
@@ -337,6 +350,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
     setGameState('PLAYING');
     setScore(0);
     setDistance(0);
+    setElapsedTimeStr('00:00');
     setCombo(1);
     setCoins(0);
     setEnergy(100);
@@ -375,7 +389,6 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         passed: false,
       });
 
-      // Spawn Coins / Powerups
       if (Math.random() < 0.6) {
         eng.powerups.push({
           x: canvas.width + 120,
@@ -388,35 +401,49 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
     let obstacleTimer = 0;
 
-    const gameLoop = (time) => {
+    const gameLoop = () => {
       const eng = engine.current;
       const dt = 1 / 60;
+      eng.frameCount++;
 
-      // Update distance & live score
-      eng.distanceMeter += eng.speed * 0.1;
+      // Update elapsed time
+      eng.elapsedSeconds = (Date.now() - eng.startTime) / 1000;
+
+      // Update distance & live calculated score
+      eng.distanceMeter += eng.speed * 0.12;
       const curDist = Math.floor(eng.distanceMeter);
-      const calculatedScore = Math.floor((curDist * eng.comboMultiplier + eng.coinsCollected * 50) * eng.scoreMultiplier);
       
-      setDistance(curDist);
-      setScore(calculatedScore);
+      // LIVE TIME SCORE CALCULATION: (Distance * Combo + Elapsed Seconds * 25 + Coins * 50) * Multiplier
+      eng.calculatedScore = Math.floor(
+        (eng.distanceMeter * eng.comboMultiplier + eng.elapsedSeconds * 25 + eng.coinsCollected * 50) * eng.scoreMultiplier
+      );
 
-      // Gradual acceleration based on difficulty
+      // Throttled UI state updates every 4 frames (~15 FPS) to keep React UI smooth without loop resets
+      if (eng.frameCount % 4 === 0) {
+        setDistance(curDist);
+        setScore(eng.calculatedScore);
+        setElapsedTimeStr(formatTime(eng.elapsedSeconds));
+      }
+
+      // Gradual speed acceleration
       const accelRate = difficulty === 'EXPERT' ? 300 : difficulty === 'HARD' ? 350 : 450;
       eng.speed = (difficulty === 'EASY' ? 4.5 : difficulty === 'HARD' ? 8.5 : difficulty === 'EXPERT' ? 11.0 : 6.0) + Math.min(8, curDist / accelRate);
 
-      // Energy auto-refill
+      // Energy refill
       const refillSpeed = difficulty === 'EASY' ? 0.08 : 0.05;
       eng.energyLevel = Math.min(100, eng.energyLevel + refillSpeed);
-      setEnergy(Math.round(eng.energyLevel));
+      if (eng.frameCount % 6 === 0) {
+        setEnergy(Math.round(eng.energyLevel));
+      }
 
-      // Random Event Engine Logic (Every 25 seconds)
+      // Random Event Engine Logic (Every 20 seconds)
       eng.nextEventIn -= dt;
       if (eng.nextEventIn <= 0) {
         const events = ['BLACKOUT', 'MIRROR', 'GIANT', 'SHADOW_RAIN'];
         const chosen = events[Math.floor(Math.random() * events.length)];
         eng.currentEvent = chosen;
         eng.eventTimer = 10;
-        eng.nextEventIn = 25;
+        eng.nextEventIn = 20;
         setActiveEvent(chosen);
       }
 
@@ -429,7 +456,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         }
       }
 
-      // Spawn obstacles periodically based on difficulty
+      // Obstacle spawner
       obstacleTimer++;
       const baseInterval = difficulty === 'EXPERT' ? 35 : difficulty === 'HARD' ? 45 : difficulty === 'EASY' ? 75 : 60;
       const spawnInterval = Math.max(25, baseInterval - Math.floor(eng.speed * 2));
@@ -438,7 +465,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         obstacleTimer = 0;
       }
 
-      // --- UPDATE PLAYER & SHADOW PHYSICS ---
+      // --- PLAYER & SHADOW PHYSICS ---
       [eng.player, eng.shadow].forEach((char) => {
         const groundY = char.onTopTrack ? eng.topTrackY : eng.bottomTrackY;
 
@@ -459,7 +486,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         }
       });
 
-      // --- UPDATE OBSTACLES & COLLISIONS ---
+      // --- OBSTACLES & COLLISIONS ---
       for (let i = eng.obstacles.length - 1; i >= 0; i--) {
         const obs = eng.obstacles[i];
         const moveSpeed = eng.slowTimeActive ? eng.speed * 0.5 : eng.speed;
@@ -487,15 +514,15 @@ export default function ShadowShiftGame({ onBackToDoor }) {
           // GAMEOVER
           audio.hit();
           setGameState('GAMEOVER');
-          if (calculatedScore > highScore) {
-            setHighScore(calculatedScore);
-            localStorage.setItem('shadow_shift_high_score', calculatedScore.toString());
+          if (eng.calculatedScore > highScore) {
+            setHighScore(eng.calculatedScore);
+            localStorage.setItem('shadow_shift_high_score', eng.calculatedScore.toString());
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
           }
           return;
         }
 
-        // Close call detection
+        // Close Call detection
         if (!obs.passed && obs.x + obs.width < targetChar.x) {
           obs.passed = true;
           const distToObs = Math.abs(charY - obsY);
@@ -513,14 +540,13 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         }
       }
 
-      // --- UPDATE POWERUPS & COINS ---
+      // --- POWERUPS & COINS ---
       for (let i = eng.powerups.length - 1; i >= 0; i--) {
         const p = eng.powerups[i];
         p.x -= eng.speed;
 
         const targetChar = eng.player.onTopTrack === p.onTopTrack ? eng.player : eng.shadow;
         const charY = targetChar.y - 18;
-
         const pY = p.onTopTrack ? eng.topTrackY - 24 : eng.bottomTrackY - 24;
 
         const dx = targetChar.x - p.x;
@@ -688,6 +714,22 @@ export default function ShadowShiftGame({ onBackToDoor }) {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       }
 
+      // CONTINUOUS DIRECT CANVAS LIVE HUD READOUT (60 FPS INSTANT MOVING DISTANCE & SCORE)
+      ctx.save();
+      ctx.font = '800 13px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#fef08a';
+      ctx.fillText(`SCORE: ${eng.calculatedScore}`, 16, 28);
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillText(`DISTANCE: ${curDist}m`, 160, 28);
+
+      ctx.fillStyle = '#34d399';
+      ctx.fillText(`TIME: ${formatTime(eng.elapsedSeconds)}`, 310, 28);
+
+      ctx.fillStyle = '#c084fc';
+      ctx.fillText(`ENERGY: ${Math.round(eng.energyLevel)}%`, 430, 28);
+      ctx.restore();
+
       animId = requestAnimationFrame(gameLoop);
     };
 
@@ -751,16 +793,26 @@ export default function ShadowShiftGame({ onBackToDoor }) {
           </div>
         )}
 
-        {/* Canvas LIVE HUD Overlay (SCORE & DISTANCE VISIBLE WHILE PLAYING) */}
+        {/* CONTINUOUS LIVE PLAYING HUD HEADER */}
         {gameState === 'PLAYING' && (
-          <div className="w-full max-w-[800px] bg-[#0D1117]/80 backdrop-blur border border-slate-800 p-2.5 rounded-2xl mb-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono font-bold text-slate-200">
-            <div className="flex items-center gap-4">
-              <span className="bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-xl">
-                SCORE: <strong className="text-amber-400 text-sm">{score}</strong>
+          <div className="w-full max-w-[800px] bg-[#0D1117]/90 backdrop-blur border border-slate-800 p-3 rounded-2xl mb-3 flex flex-wrap items-center justify-between gap-3 text-xs font-mono font-bold text-slate-200 shadow-xl">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* LIVE TIME SCORE */}
+              <span className="bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-xl flex items-center gap-1.5">
+                <Trophy className="w-3.5 h-3.5 text-amber-400" />
+                <span>SCORE: <strong className="text-amber-400 text-sm font-extrabold">{score}</strong></span>
               </span>
 
-              <span className="bg-sky-500/10 border border-sky-500/30 px-2.5 py-1 rounded-xl">
-                DISTANCE: <strong className="text-sky-300 text-sm">{distance} m</strong>
+              {/* LIVE MOVING DISTANCE */}
+              <span className="bg-sky-500/10 border border-sky-500/30 px-3 py-1 rounded-xl flex items-center gap-1.5">
+                <span className="text-sky-400">🏃</span>
+                <span>DISTANCE: <strong className="text-sky-300 text-sm font-extrabold">{distance} m</strong></span>
+              </span>
+
+              {/* LIVE SURVIVAL TIME */}
+              <span className="bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-xl flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <span>TIME: <strong className="text-emerald-300 text-sm font-extrabold">{elapsedTimeStr}</strong></span>
               </span>
 
               <span>COMBO: <strong className="text-emerald-400 text-sm">×{combo}</strong></span>
@@ -769,7 +821,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
             {/* Difficulty Badge & Energy Bar */}
             <div className="flex items-center gap-3">
-              <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold border ${
+              <span className={`text-[10px] px-2.5 py-0.5 rounded font-mono font-bold border ${
                 difficulty === 'EASY' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
                 difficulty === 'MEDIUM' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' :
                 difficulty === 'HARD' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40' :
@@ -780,7 +832,7 @@ export default function ShadowShiftGame({ onBackToDoor }) {
 
               <div className="flex items-center gap-1.5">
                 <span className="text-[10px] text-slate-400">ENERGY:</span>
-                <div className="w-24 h-2.5 bg-slate-900 border border-slate-700 rounded-full overflow-hidden p-0.5">
+                <div className="w-20 h-2.5 bg-slate-900 border border-slate-700 rounded-full overflow-hidden p-0.5">
                   <div 
                     className="h-full bg-gradient-to-r from-purple-500 to-sky-400 rounded-full transition-all"
                     style={{ width: `${energy}%` }}
@@ -875,6 +927,10 @@ export default function ShadowShiftGame({ onBackToDoor }) {
                 <div className="flex justify-between">
                   <span className="text-slate-400">FINAL SCORE:</span>
                   <span className="font-bold text-amber-300">{score}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">SURVIVAL TIME:</span>
+                  <span className="font-bold text-emerald-300">{elapsedTimeStr}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-slate-400">DISTANCE:</span>
