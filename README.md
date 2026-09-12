@@ -100,21 +100,13 @@ For Software:
 
 # Diagrams
 
-![Workflow](Add your workflow or architecture diagram here)
+![Workflow]  
+(<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/cd4ee923-aa04-4770-9590-65b311172778" />)
 
 *The workflow showing student identification, attendance analysis, AI diagnostics, reverse logic, door decision and final verdict.*
 
 For Hardware:
 
-# Schematic & Circuit
-
-![Circuit](No physical circuit used)
-
-*The project does not require any physical electronic circuit. The door, servo and indicators are digitally simulated.*
-
-![Schematic](No physical hardware schematic)
-
-*All hardware-like interactions are implemented using web technologies and browser APIs.*
 
 # Build Photos
 
